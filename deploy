@@ -7,52 +7,105 @@ today=`date`
 MSG=''
 SPACE=" "
 
-while true;
-do
-    echo -e "1) update.\n"
-    echo -e "2) bugfix.\n"
-    echo -e "3) post.\n"
-    echo -e "4) close\n"
-    echo -e "선택해주세요."
-    
-    read -r -n 1 input
-    
-    if [ $input -eq 1 ];then
-        clear
-        echo "업데이트로 진행합니다."
-        echo "메세지 남기기 (enter: 공백으로 넘어가기)"
-        read MSG
-        TYPE=":bulb: update:"
-        break
-    fi
+function selector(){
+    RESULT=""
+    while true;
+    do
+        echo -e "1) update.\n"
+        echo -e "2) bugfix.\n"
+        echo -e "3) post.\n"
+        echo -e "4) close\n"
+        echo -e "선택해주세요."
+        
+        read -r -n 1 input
+        
+        if [ $input -eq 1 ];then
+            clear
+            echo "업데이트로 진행합니다."
+            echo "메세지 남기기 (enter: 공백으로 넘어가기)"
+            read MSG
+            RESULT=":bulb: update:"
+            break
+        fi
 
-    if [ $input -eq 2 ];then
-        clear
-        echo "버그 수정으로 진행합니다."
-        echo "메세지 남기기 (enter: 공백으로 넘어가기)"
-        read MSG
-        TYPE=":wrench: bugfix:"
-        break
-    fi
+        if [ $input -eq 2 ];then
+            clear
+            echo "버그 수정으로 진행합니다."
+            echo "메세지 남기기 (enter: 공백으로 넘어가기)"
+            read MSG
+            RESULT=":wrench: bugfix:"
+            break
+        fi
 
-    if [ $input -eq 3 ];then
-        clear
-        echo "포스팅으로 진행합니다."
-        echo "메세지 남기기 (enter: 공백으로 넘어가기)"
-        read MSG
-        TYPE=":bulb: post:"
-        break
-    fi
+        if [ $input -eq 3 ];then
+            clear
+            echo "포스팅으로 진행합니다."
+            echo "메세지 남기기 (enter: 공백으로 넘어가기)"
+            read MSG
+            RESULT=":bulb: post:"
+            break
+        fi
 
-    if [ $input -eq 4 ];then
-        clear
-        echo "종료됩니다."
-        break
-    fi
-done
+        if [ $input -eq 4 ];then
+            clear
+            echo "종료됩니다."
+            exit 1
+        fi
+    done
+}
+
+selector
+TYPE=$RESULT
+
+# while true;
+# do
+#     if [ selector ];then
+#         break
+#     fi
+# done
 
 MSG=" ${MSG}"
+CHECK=""
 
+function after() {
+    while [ CHECK != "" ]
+    do
+        clear
+        
+        echo "진행 할 사항을 검토합니다."
+        echo "commit type: $TYPE"
+        echo "commit message: $MSG"
+        echo "위 내용이 맞습니까? (Y/n)"
+        read CHECK
+
+        if [[ $CHECK == "" ]];then
+            CHECK="y"
+        fi
+
+        if [[ $CHECK != "y" && $CHECK != "Y" && $CHECK != "n" && $CHECK != "N" ]];then
+            echo "y 또는 n으로 입력하셔야 합니다."
+        else
+            break
+        fi
+    done
+}
+
+after
+
+clear
+
+if [[ $CHECK == "y" || $CHECK == "Y" ]];then
+    echo "진행 중 입니다."
+else
+    echo "내용을 새로 작성합니다."
+    selector
+    TYPE=$RESULT
+fi
+
+echo "최종 진행"
+echo $TYPE
+echo $MSG
+MSG=" $MSG"
 # 문서(md)를 build하여 html로 만든다. 
 # npm run build
 
