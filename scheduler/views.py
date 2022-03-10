@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
+from .models import User
 
 # Create your views here.
 @api_view(['GET'])
@@ -25,7 +26,10 @@ def signin(request):
 
 @api_view(['GET'])
 def schedule(request):
+    user = User.objects.all()
+    
     context = {
-        'board': 1
+        'schedule': user
     }
+
     return render(request, 'scheduler/schedule.html', context)
