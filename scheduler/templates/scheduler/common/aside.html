@@ -1,19 +1,41 @@
 <aside class="left-sidebar" data-sidebarbg="skin6">
-    <!-- Sidebar scroll-->
     <div class="scroll-sidebar">
-        <!-- Sidebar navigation-->
         <nav class="sidebar-nav">
             <ul id="sidebarnav">
-                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                        href="/" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span
-                            class="hide-menu">List</span></a></li>
-                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                        href="/signup" aria-expanded="false"><i
-                            class="mdi mdi-account-network"></i><span class="hide-menu">User Info</span></a></li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/" aria-expanded="false">
+                        <i class="mdi mdi-view-dashboard"></i>
+                        <span class="hide-menu">List</span>
+                    </a>
+                </li>
+                {% if request.session.sign != '' %}
+                <li class="sidebar-item">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'account:signout' %}" aria-expanded="false">
+                        <i class="mdi mdi-export"></i>
+                        <span class="hide-menu">sign out</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'account:update' num=request.session.sign.num %}" aria-expanded="false">
+                        <i class="mdi mdi-account-circle"></i>
+                        <span class="hide-menu">User Info</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="sidebar-item">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'account:signin' %}" aria-expanded="false">
+                        <i class="mdi mdi-import"></i>
+                        <span class="hide-menu">Sign in</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'account:signup' %}" aria-expanded="false">
+                        <i class="mdi mdi-account-multiple-plus"></i>
+                        <span class="hide-menu">Sign up</span>
+                    </a>
+                </li>
+                {% endif %}
             </ul>
-
         </nav>
-        <!-- End Sidebar navigation -->
     </div>
-    <!-- End Sidebar scroll-->
 </aside>

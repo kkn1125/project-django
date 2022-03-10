@@ -15,9 +15,9 @@ CREATE SCHEMA IF NOT EXISTS `scheduler` DEFAULT CHARACTER SET utf8 ;
 USE `scheduler` ;
 
 -- -----------------------------------------------------
--- Table `scheduler`.`user`
+-- Table `scheduler`.`scheduler_user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scheduler`.`user` (
+CREATE TABLE IF NOT EXISTS `scheduler`.`scheduler_user` (
   `num` INT NOT NULL AUTO_INCREMENT,
   `profile` VARCHAR(150) NULL DEFAULT '',
   `nickname` VARCHAR(45) NOT NULL,
@@ -30,9 +30,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `scheduler`.`room`
+-- Table `scheduler`.`scheduler_room`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scheduler`.`room` (
+CREATE TABLE IF NOT EXISTS `scheduler`.`scheduler_room` (
   `num` INT NOT NULL AUTO_INCREMENT,
   `master` INT NOT NULL,
   `title` VARCHAR(45) NOT NULL,
@@ -43,9 +43,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `scheduler`.`user_in_room`
+-- Table `scheduler`.`scheduler_userinroom`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scheduler`.`user_in_room` (
+CREATE TABLE IF NOT EXISTS `scheduler`.`scheduler_userinroom` (
   `num` INT NOT NULL AUTO_INCREMENT,
   `room_num` INT NOT NULL,
   `user_num` INT NOT NULL,
@@ -54,21 +54,21 @@ CREATE TABLE IF NOT EXISTS `scheduler`.`user_in_room` (
   INDEX `fk_user_in_room_user1_idx` (`user_num` ASC) VISIBLE,
   CONSTRAINT `fk_user_in_room_room`
     FOREIGN KEY (`room_num`)
-    REFERENCES `scheduler`.`room` (`num`)
+    REFERENCES `scheduler`.`scheduler_room` (`num`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_user_in_room_user1`
     FOREIGN KEY (`user_num`)
-    REFERENCES `scheduler`.`user` (`num`)
+    REFERENCES `scheduler`.`scheduler_user` (`num`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `scheduler`.`calendar`
+-- Table `scheduler`.`scheduler_calendar`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scheduler`.`calendar` (
+CREATE TABLE IF NOT EXISTS `scheduler`.`scheduler_calendar` (
   `num` INT NOT NULL AUTO_INCREMENT,
   `room_num` INT NOT NULL,
   `user_num` INT NOT NULL,
@@ -85,12 +85,12 @@ CREATE TABLE IF NOT EXISTS `scheduler`.`calendar` (
   INDEX `fk_calendar_user1_idx` (`user_num` ASC) VISIBLE,
   CONSTRAINT `fk_calendar_room1`
     FOREIGN KEY (`room_num`)
-    REFERENCES `scheduler`.`room` (`num`)
+    REFERENCES `scheduler`.`scheduler_room` (`num`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_calendar_user1`
     FOREIGN KEY (`user_num`)
-    REFERENCES `scheduler`.`user` (`num`)
+    REFERENCES `scheduler`.`scheduler_user` (`num`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -99,6 +99,7 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
 
 use scheduler;
 show tables;

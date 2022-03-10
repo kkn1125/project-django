@@ -1,45 +1,21 @@
 <header class="topbar" data-navbarbg="skin6">
     <nav class="navbar top-navbar navbar-expand-md navbar-light">
         <div class="navbar-header" data-logobg="skin6">
-            <!-- ============================================================== -->
-            <!-- Logo -->
-            <!-- ============================================================== -->
             <a class="navbar-brand" href="/">
-                <!-- Logo icon -->
                 <b class="logo-icon">
-                    <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                    <!-- Dark Logo icon -->
-                    <img src="static/assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
-                    <!-- Light Logo icon -->
-                    <img src="static/assets/images/logo-light-icon.png" alt="homepage" class="light-logo" />
+                    <img src="/static/assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
+                    <img src="/static/assets/images/logo-light-icon.png" alt="homepage" class="light-logo" />
                 </b>
-                <!--End Logo icon -->
-                <!-- Logo text -->
                 <span class="logo-text">
-                    <!-- dark Logo text -->
-                    <img src="static/assets/images/logo-text.png" alt="homepage" class="dark-logo" />
-                    <!-- Light Logo text -->
-                    <img src="static/assets/images/logo-light-text.png" class="light-logo" alt="homepage" />
+                    <img src="/static/assets/images/logo-text.png" alt="homepage" class="dark-logo" />
+                    <img src="/static/assets/images/logo-light-text.png" class="light-logo" alt="homepage" />
                 </span>
             </a>
-            <!-- ============================================================== -->
-            <!-- End Logo -->
-            <!-- ============================================================== -->
-            <!-- This is for the sidebar toggle which is visible on mobile only -->
             <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
                     class="mdi mdi-menu"></i></a>
         </div>
-        <!-- ============================================================== -->
-        <!-- End Logo -->
-        <!-- ============================================================== -->
         <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
-            <!-- ============================================================== -->
-            <!-- toggle and nav items -->
-            <!-- ============================================================== -->
             <ul class="navbar-nav float-start me-auto">
-                <!-- ============================================================== -->
-                <!-- Search -->
-                <!-- ============================================================== -->
                 <li class="nav-item search-box"> <a class="nav-link waves-effect waves-dark"
                         href="javascript:void(0)"><i class="mdi mdi-magnify me-1"></i> <span class="font-16">Search</span></a>
                     <form class="app-search position-absolute">
@@ -48,19 +24,20 @@
                     </form>
                 </li>
             </ul>
-            <!-- ============================================================== -->
-            <!-- Right side toggle and nav items -->
-            <!-- ============================================================== -->
             <ul class="navbar-nav float-end">
-                <!-- ============================================================== -->
-                <!-- User profile and search -->
-                <!-- ============================================================== -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if request.session.sign != '' %}
+                        <img src="/media/{{ request.session.sign.profile }}" alt="user" class="rounded-circle" width="31" height="31" style="aspect-ratio: 6/6">
+                        {% else %}
                         <img src="https://images.theconversation.com/files/443350/original/file-20220131-15-1ndq1m6.jpg?ixlib=rb-1.1.0&rect=0%2C0%2C3354%2C2464&q=45&auto=format&w=926&fit=clip" alt="user" class="rounded-circle" width="31" height="31" style="aspect-ratio: 6/6">
+                        {% endif %}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="javascript:void(0)"><i class="ti-user m-r-5 m-l-5"></i>
+                        {% if user.is_authenticated %}
+                        <a href="#">{{user.username}}</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="/profile"><i class="ti-user m-r-5 m-l-5"></i>
                             My Profile</a>
                         <a class="dropdown-item" href="javascript:void(0)"><i class="ti-wallet m-r-5 m-l-5"></i>
                             My Balance</a>
@@ -68,9 +45,6 @@
                             Inbox</a>
                     </ul>
                 </li>
-                <!-- ============================================================== -->
-                <!-- User profile and search -->
-                <!-- ============================================================== -->
             </ul>
         </div>
     </nav>

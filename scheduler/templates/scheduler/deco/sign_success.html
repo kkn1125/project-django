@@ -1,0 +1,7 @@
+{% if request.GET.success == '1' %}
+<div>
+    <div class="alert alert-info">
+        {{request.session.sign.nickname}}님 로그인에 성공하셨습니다.
+    </div>
+</div>
+{% endif %}
