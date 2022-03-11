@@ -5,7 +5,7 @@ from django.utils import timezone
 class User(models.Model):
     num = models.IntegerField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
-    profile = models.CharField(max_length=150, null=True)
+    profile = models.ImageField(upload_to="", null=True, blank=True)
     nickname = models.CharField(max_length=45, null=False)
     email = models.CharField(max_length=45, null=False)
     password = models.CharField(max_length=45, null=False)
@@ -20,7 +20,7 @@ class Room(models.Model):
     regdate = models.DateTimeField('created', default=timezone.now, editable=False, null=False, blank=False)
     updates = models.DateTimeField('updated', default=timezone.now, editable=False, null=False, blank=False)
     
-class user_in_room(models.Model):
+class UserInRoom(models.Model):
     num = models.IntegerField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
     room_num = models.IntegerField(null=False)
@@ -28,7 +28,7 @@ class user_in_room(models.Model):
     regdate = models.DateTimeField('created', default=timezone.now, editable=False, null=False, blank=False)
     updates = models.DateTimeField('updated', default=timezone.now, editable=False, null=False, blank=False)
     
-class calendar(models.Model):
+class Calendar(models.Model):
     num = models.IntegerField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
     room_num = models.IntegerField(null=False)

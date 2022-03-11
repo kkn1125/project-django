@@ -1,22 +1,8 @@
 {% extends './layout.html' %}
 
 {% block content %}
-<div class="page-wrapper">
-    <!-- ============================================================== -->
-    <div class="page-breadcrumb">
-        <div class="row align-items-center">
-            <div class="col-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0 d-flex align-items-center">
-                      <li class="breadcrumb-item"><a href="index.html" class="link"><i class="mdi mdi-home-outline fs-4"></i></a></li>
-                      <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                    </ol>
-                  </nav>
-                <h1 class="mb-0 fw-bold">Dashboard</h1> 
-            </div>
-        </div>
-    </div>
-    <div class="container-fluid">
+<div class="container-fluid">
+        {% include './deco/sign_success.html' %}
         <div class="row">
             <!-- column -->
             <div class="col-12">
@@ -150,6 +136,4 @@
             </div>
         </div>
     </div>
-</div>
-
 {% endblock %}
