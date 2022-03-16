@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap5',
     'sass_processor',
     'rest_framework',
     'account',
-    'scheduler'
+    'scheduler',
+    'room',
 ]
 
 SASS_PROCESSOR_ENABLED = True
@@ -73,6 +75,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'customs': 'scheduler.templatetags.customs',
+            }
         },
     },
 ]

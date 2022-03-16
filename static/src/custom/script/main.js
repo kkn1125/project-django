@@ -54,3 +54,40 @@ if(relNickname) {
         relNickname.textContent = nickname.value||'No Name';
     });
 }
+
+var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+var toastList = toastElList.map(function (toastEl) {
+  return new bootstrap.Toast(toastEl, option)
+});
+
+function createToast(title='Master', msg='No Message', time=new Date(), auto=true){
+    const svg = `<svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#007aff"></rect></svg>`;
+    const toast = document.createElement('div');
+    toast.setAttribute('class', 'toast');
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    toast.setAttribute('data-bs-autohide', auto);
+    toast.innerHTML = `<div class="toast-header">
+    ${svg}
+    <strong class="me-auto">${title}</strong>
+    <small>${time.toLocaleString()}</small>
+    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+    ${msg}
+    </div>`;
+    return toast;
+}
+
+function addToast({title, msg, time, auto}) {
+    const container = document.querySelector('.toast-container');
+    const toast = createToast(title, msg, time, auto);
+    container.append(toast);
+    showToast(toast);
+}
+
+function showToast(toastEl){
+    var toast = new bootstrap.Toast(toastEl);
+    toast.show();
+}

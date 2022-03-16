@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, NumberInput
 from .models import *
 
 class UserForm(ModelForm):
@@ -12,8 +12,15 @@ class RoomForm(ModelForm):
     class Meta:
         model = Room
         fields = [
-            'master', 'title'#, 'email', 'password'#, 'updates'
+            'title'#, 'master',  'email', 'password'#, 'updates'
             ]
+        # widgets = {
+        #     'master': NumberInput(
+        #         attrs = {
+        #             'hidden': True
+        #         }
+        #         )
+        #     }
 
 class UserInRoomForm(ModelForm):
     class Meta:

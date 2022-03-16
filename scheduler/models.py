@@ -3,7 +3,7 @@ from django.utils import timezone
 
 # Create your models here.
 class User(models.Model):
-    num = models.IntegerField(primary_key=True)
+    num = models.AutoField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
     profile = models.ImageField(upload_to="", null=True, blank=True)
     nickname = models.CharField(max_length=45, null=False)
@@ -13,7 +13,7 @@ class User(models.Model):
     updates = models.DateTimeField('updated', default=timezone.now, editable=False, null=False, blank=False)
     
 class Room(models.Model):
-    num = models.IntegerField(primary_key=True)
+    num = models.AutoField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
     master = models.IntegerField(null=False)
     title = models.CharField(max_length=45, null=False)
@@ -21,7 +21,7 @@ class Room(models.Model):
     updates = models.DateTimeField('updated', default=timezone.now, editable=False, null=False, blank=False)
     
 class UserInRoom(models.Model):
-    num = models.IntegerField(primary_key=True)
+    num = models.AutoField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
     room_num = models.IntegerField(null=False)
     user_num = models.IntegerField(null=False)
@@ -29,7 +29,7 @@ class UserInRoom(models.Model):
     updates = models.DateTimeField('updated', default=timezone.now, editable=False, null=False, blank=False)
     
 class Calendar(models.Model):
-    num = models.IntegerField(primary_key=True)
+    num = models.AutoField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
     room_num = models.IntegerField(null=False)
     user_num = models.IntegerField(null=False)

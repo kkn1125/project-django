@@ -51,9 +51,11 @@
                         
                         <div class="form-group">
                             <div class="col-sm-12">
-                                <button class="btn btn-success text-white">Sign Up</button>
                                 {% if request.session.sign != '' %}
+                                <button class="btn btn-success text-white">Update</button>
                                 <button class="btn btn-danger text-white" id="unsign" dir="{% url 'account:unsign' num=1 %}" type="button">Un Sign</button>
+                                {% else %}
+                                <button class="btn btn-success text-white">Sign Up</button>
                                 {% endif %}
                             </div>
                         </div>

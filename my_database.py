@@ -1,11 +1,11 @@
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'scheduler', # db 이름
-        'USER': 'root',
+        'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',
-        'PORT': 3306,
+        'PORT': 5432,
     }
 }
 

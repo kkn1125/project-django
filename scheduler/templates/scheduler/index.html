@@ -1,8 +1,7 @@
 {% extends './layout.html' %}
-
+{% load customs %}
 {% block content %}
 <div class="container-fluid">
-        {% include './deco/sign_success.html' %}
         <div class="row">
             <!-- column -->
             <div class="col-12">
@@ -24,22 +23,23 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="ms-3">
+                                <a class="btn btn-info" href="{% url 'room:create' %}">Create room</a>
+                            </div>
                         </div>
                         <!-- title -->
                         <div class="table-responsive">
                             <table class="table mb-0 table-hover align-middle text-nowrap">
                                 <thead>
                                     <tr>
-                                        <th class="border-top-0">Products</th>
-                                        <th class="border-top-0">License</th>
-                                        <th class="border-top-0">Support Agent</th>
-                                        <th class="border-top-0">Technology</th>
-                                        <th class="border-top-0">Tickets</th>
-                                        <th class="border-top-0">Sales</th>
-                                        <th class="border-top-0">Earnings</th>
+                                        <th class="border-top-0">Title</th>
+                                        <th class="border-top-0">Participants</th>
+                                        <th class="border-top-0">Master</th>
+                                        <th class="border-top-0">Menu</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for room in room_list %}
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
@@ -47,87 +47,51 @@
                                                         class="btn btn-circle d-flex btn-info text-white">EA</a>
                                                 </div>
                                                 <div class="">
-                                                    <h4 class="m-b-0 font-16">Elite Admin</h4>
+                                                    <h4 class="m-b-0 font-16 fw-bold">{{room.title}}</h4>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>Single Use</td>
-                                        <td>John Doe</td>
+
+                                        {% with room.num|user_count as count %}
+                                        <td>{{count}}</td>
+                                        {% endwith %}
+
+                                        {% with room.master|find_user as user %}
                                         <td>
-                                            <label class="badge bg-danger">Angular</label>
+                                            <label class="badge bg-danger">{{user.nickname}}</label>
                                         </td>
-                                        <td>46</td>
-                                        <td>356</td>
+                                        {% endwith %}
                                         <td>
-                                            <h5 class="m-b-0">$2850.06</h5>
+                                            {% if request.session.sign.num == room.master %}
+                                            <button class="btn btn-success">🛠</button>
+                                            <form class="d-inline-block" action="{% url 'room:delete' room_num=room.num %}" method="post">
+                                                <button class="btn btn-danger">&times;</button>
+                                            </form>
+                                            {% else %}
+                                                {% if room.num|is_crew:request.session.sign.num %}
+                                                <a href="{% url 'room:enter' room_num=room.num %}" class="btn btn-success">👈 Enter</a>
+                                                <form class="d-inline-block" action="{% url 'room:out' room_num=room.num %}" method="post">
+                                                    <input type="hidden" name="user_num" value="{{request.session.sign.num}}">
+                                                    <button type="submit" class="btn btn-danger">👋 Out</button>
+                                                </form>
+                                                {% else %}
+                                                <form class="d-inline-block" action="{% url 'room:join' room_num=room.num %}" method="post">
+                                                    <input type="hidden" name="user_num" value="{{request.session.sign.num}}">
+                                                    <button type="submit" class="btn btn-info">👈 Join the room</button>
+                                                </form>
+                                                {% endif %}
+                                            {% endif %}
                                         </td>
                                     </tr>
+                                    {% empty %}
                                     <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="m-r-10"><a
-                                                        class="btn btn-circle d-flex btn-orange text-white">MA</a>
-                                                </div>
-                                                <div class="">
-                                                    <h4 class="m-b-0 font-16">Monster Admin</h4>
-                                                </div>
+                                        <td colspan="4">
+                                            <div class="alert alert-warning">
+                                                참여 가능한 방이 없습니다.
                                             </div>
                                         </td>
-                                        <td>Single Use</td>
-                                        <td>Venessa Fern</td>
-                                        <td>
-                                            <label class="badge bg-info">Vue Js</label>
-                                        </td>
-                                        <td>46</td>
-                                        <td>356</td>
-                                        <td>
-                                            <h5 class="m-b-0">$2850.06</h5>
-                                        </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="m-r-10"><a
-                                                        class="btn btn-circle d-flex btn-success text-white">MP</a>
-                                                </div>
-                                                <div class="">
-                                                    <h4 class="m-b-0 font-16">Material Pro Admin</h4>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>Single Use</td>
-                                        <td>John Doe</td>
-                                        <td>
-                                            <label class="badge bg-success">Bootstrap</label>
-                                        </td>
-                                        <td>46</td>
-                                        <td>356</td>
-                                        <td>
-                                            <h5 class="m-b-0">$2850.06</h5>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="m-r-10"><a
-                                                        class="btn btn-circle d-flex btn-purple text-white">AA</a>
-                                                </div>
-                                                <div class="">
-                                                    <h4 class="m-b-0 font-16">Ample Admin</h4>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>Single Use</td>
-                                        <td>John Doe</td>
-                                        <td>
-                                            <label class="badge bg-purple">React</label>
-                                        </td>
-                                        <td>46</td>
-                                        <td>356</td>
-                                        <td>
-                                            <h5 class="m-b-0">$2850.06</h5>
-                                        </td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>

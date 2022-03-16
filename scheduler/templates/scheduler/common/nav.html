@@ -1,14 +1,15 @@
+{% load static %}
 <header class="topbar" data-navbarbg="skin6">
     <nav class="navbar top-navbar navbar-expand-md navbar-light">
         <div class="navbar-header" data-logobg="skin6">
             <a class="navbar-brand" href="/">
                 <b class="logo-icon">
-                    <img src="/static/assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
-                    <img src="/static/assets/images/logo-light-icon.png" alt="homepage" class="light-logo" />
+                    <img src="{% static 'assets/images/logo-icon.png' %}" alt="homepage" class="dark-logo" />
+                    <img src="{% static 'assets/images/logo-light-icon.png' %}" alt="homepage" class="light-logo" />
                 </b>
                 <span class="logo-text">
-                    <img src="/static/assets/images/logo-text.png" alt="homepage" class="dark-logo" />
-                    <img src="/static/assets/images/logo-light-text.png" class="light-logo" alt="homepage" />
+                    <img src="{% static 'assets/images/logo-text.png' %}" alt="homepage" class="dark-logo" />
+                    <img src="{% static 'assets/images/logo-light-text.png' %}" class="light-logo" alt="homepage" />
                 </span>
             </a>
             <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
@@ -27,7 +28,7 @@
             <ul class="navbar-nav float-end">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if request.session.sign != '' %}
+                        {% if request.session.sign %}
                         <img src="/media/{{ request.session.sign.profile }}" alt="user" class="rounded-circle" width="31" height="31" style="aspect-ratio: 6/6">
                         {% else %}
                         <img src="https://images.theconversation.com/files/443350/original/file-20220131-15-1ndq1m6.jpg?ixlib=rb-1.1.0&rect=0%2C0%2C3354%2C2464&q=45&auto=format&w=926&fit=clip" alt="user" class="rounded-circle" width="31" height="31" style="aspect-ratio: 6/6">

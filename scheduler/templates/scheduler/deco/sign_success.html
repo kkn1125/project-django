@@ -1,7 +1,24 @@
-{% if request.GET.success == '1' %}
-<div>
-    <div class="alert alert-info">
-        {{request.session.sign.nickname}}님 로그인에 성공하셨습니다.
-    </div>
-</div>
-{% endif %}
+<script>
+    const data = {% if request.GET.success == '1' %}
+    {
+        title: 'System',
+        msg: '{{request.session.sign.nickname}}님 로그인에 성공하셨습니다.',
+        auto: true,
+    }
+    {% elif request.GET.success == '2' %}
+    {
+        title: 'System',
+        msg: '방에 참여하셨습니다. 이제 방에서 활동 가능합니다.',
+        auto: true,
+    }
+    {% elif request.GET.success == '3' %}
+    {
+        title: 'System',
+        msg: '방에서 나갔습니다.',
+        auto: true,
+    }
+    {% else %}
+    {}
+    {% endif %}
+    if(data.hasOwnProperty('title')) window.addEventListener('DOMContentLoaded', e=>addToast(data));
+</script>
