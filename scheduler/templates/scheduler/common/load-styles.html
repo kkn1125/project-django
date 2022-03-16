@@ -116,66 +116,69 @@
   });
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-    calendar = new FullCalendar.Calendar(calendarEl, {
-      headerToolbar: {
-        left: 'prevYear,prev,next,nextYear today',
-        center: 'title',
-        right: 'dayGridMonth,dayGridWeek,dayGridDay'
-      },
-      dayMaxEventRows: true,
-      views: {
-          timeGrid: {
-              dayMaxEventRows: 5
-          }
-      },
-      themeSystem: 'standard',
-      initialView: 'dayGridMonth',
-      selectable: true,
-      editable: true,
-      navLinks: true,
-      // dateClick: function (info) {
-      //     console.log(this.getEvents())
-      // },
-      selectAllow: function (info) {
-          console.log('selecting')
-          return true
-      },
-      select: function (info){
-        document.querySelector('#calPopup')?.remove();
-        if(!document.querySelector('#calPopup'))
-          popupmodal({
-              title: 'no title',
-              start: info.startStr,
-              end: info.endStr
-          });
-          //this.addEvent({
-          //    title: 'test',
-          //    start: info.startStr,
-          //    end: info.endStr,
-          //});
-      },
-      // unselect: function (ev) {
-      //   
-      // },
-      eventClick: function(info) {
-          console.log(info.event.startStr)
-          if(!document.querySelector('#calPopup'))
-          popupUpdateModal({
-              title: info.event.title,
-          }, send)
-          function send(data){
-              info.event.setProp('title', data)
-          }
-          // info.event.setProp('title', 'wow!')
-          // 내용 변경!
-          console.log(info.view.type)
-      },
-      eventChange: function (info) {
-          console.log(info)
-      },
-    });
-    setTimeout(()=>{
-      calendar.render();
-    }, 100);
+    if(calendarEl)
+    {
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            headerToolbar: {
+              left: 'prevYear,prev,next,nextYear today',
+              center: 'title',
+              right: 'dayGridMonth,dayGridWeek,dayGridDay'
+            },
+            dayMaxEventRows: true,
+            views: {
+                timeGrid: {
+                    dayMaxEventRows: 5
+                }
+            },
+            themeSystem: 'standard',
+            initialView: 'dayGridMonth',
+            selectable: true,
+            editable: true,
+            navLinks: true,
+            // dateClick: function (info) {
+            //     console.log(this.getEvents())
+            // },
+            selectAllow: function (info) {
+                console.log('selecting')
+                return true
+            },
+            select: function (info){
+              document.querySelector('#calPopup')?.remove();
+              if(!document.querySelector('#calPopup'))
+                popupmodal({
+                    title: 'no title',
+                    start: info.startStr,
+                    end: info.endStr
+                });
+                //this.addEvent({
+                //    title: 'test',
+                //    start: info.startStr,
+                //    end: info.endStr,
+                //});
+            },
+            // unselect: function (ev) {
+            //   
+            // },
+            eventClick: function(info) {
+                console.log(info.event.startStr)
+                if(!document.querySelector('#calPopup'))
+                popupUpdateModal({
+                    title: info.event.title,
+                }, send)
+                function send(data){
+                    info.event.setProp('title', data)
+                }
+                // info.event.setProp('title', 'wow!')
+                // 내용 변경!
+                console.log(info.view.type)
+            },
+            eventChange: function (info) {
+                console.log(info)
+            },
+        });
+        setTimeout(()=>{
+            calendar.render();
+        }, 100);
+    }
   });
 </script>

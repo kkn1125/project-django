@@ -99,8 +99,7 @@ def signout(request):
 
 @api_view(['POST'])
 def unsign(request, num):
-    user = User.objects.get(num=num)
-    user.delete()
+    User.objects.filter(num=num).delete()
     
     request.session['sign'] = ''
     

@@ -23,9 +23,11 @@
                                     </select>
                                 </div>
                             </div>
+                            {% if request.session.sign %}
                             <div class="ms-3">
                                 <a class="btn btn-info" href="{% url 'room:create' %}">Create room</a>
                             </div>
+                            {% endif %}
                         </div>
                         <!-- title -->
                         <div class="table-responsive">
@@ -75,10 +77,14 @@
                                                     <button type="submit" class="btn btn-danger">👋 Out</button>
                                                 </form>
                                                 {% else %}
+                                                {% if request.session.sign %}
                                                 <form class="d-inline-block" action="{% url 'room:join' room_num=room.num %}" method="post">
                                                     <input type="hidden" name="user_num" value="{{request.session.sign.num}}">
                                                     <button type="submit" class="btn btn-info">👈 Join the room</button>
                                                 </form>
+                                                {% else %}
+                                                <button onclick="alert('로그인이 필요합니다.')" class="btn btn-info">👈 Join the room</button>
+                                                {% endif %}
                                                 {% endif %}
                                             {% endif %}
                                         </td>
