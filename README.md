@@ -8,4 +8,4 @@ django
 
 ## authors
 
-@kimson , @ohoraming 
+[@kimson](https://github.com/kkn1125), [@ohoraming](https://github.com/ohoraming)
