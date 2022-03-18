@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 # from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from scheduler.models import User
-from scheduler.forms import UserForm
+from scheduler.forms import UserForm, LoginForm
 
 def path_type(request):
     if request.path.split('/')[-1] == 'signin':
@@ -13,31 +13,38 @@ def path_type(request):
 # Create your views here.
 @api_view(['GET', 'POST'])
 def signin(request):
-    if request.method == 'GET':
-        context = {
-            'path_type': path_type(request),
-        }
-        return render(request, 'scheduler/signin.html', context)
-    elif request.method == 'POST':
+    result = True
+    if request.method == 'POST':
         data = request.POST
-        
-        email = data['email']
-        password = data['password']
-        if User.objects.filter(email=email).exists():
-            user = User.objects.get(email=email)
-            if password == user.password:
-                request.session['sign'] = {
-                    'nickname': user.nickname,
-                    'email': user.email,
-                    'profile': str(user.profile),
-                    'num': user.num,
-                }
-                return redirect('/?success=1')
+        form = LoginForm(data)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            result = True
+            if User.objects.filter(email=email).exists():
+                    user = User.objects.get(email=email)
+                    if password == user.password:
+                        request.session['sign'] = {
+                            'nickname': user.nickname,
+                            'email': user.email,
+                            'profile': str(user.profile),
+                            'num': user.num,
+                        }
+                        return redirect('/?success=1')
+                    else:
+                        return redirect('./signin?error=1')
             else:
-                return redirect('./signin?error=1')
-        else:
-            request.session['sign'] = ''
-            return redirect('./signin?error=1')
+                result = False
+                request.session['sign'] = ''
+    else:
+        form = LoginForm()
+        
+    context = {
+        'path_type': path_type(request),
+        'form': form
+    }
+    
+    return render(request, 'scheduler/signin.html', context) if result else redirect('./signin?error=1')
 
 @api_view(['GET', 'POST'])
 def signup(request):
@@ -95,7 +102,7 @@ def update(request, num):
 @api_view(['GET'])
 def signout(request):
     request.session['sign'] = ''
-    return redirect('index')
+    return redirect('/')
 
 @api_view(['POST'])
 def unsign(request, num):
