@@ -6,15 +6,10 @@
         <thead>
             <tr class="thead-dark">
                 <th>no.</th>
-                <!--<th>room_num</th>
-                <th>user_num</th>-->
                 <th>category</th>
                 <th>title</th>
-                <!--<th>schedule</th>
-                <th>coworker</th>-->
                 <th>start_date</th>
                 <th>end_date</th>
-                <!--<th>regdate</th>-->
                 <th>updates</th>
             </tr>
         </thead>
@@ -23,15 +18,10 @@
             {% for schedule in schedule_list %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <!--<td>{{ schedule.room_num }}</td>
-                <td>{{ schedule.user_num }}</td>-->
                 <td>{{ schedule.category }}</td>
-                <td>{{ schedule.title }}</td>
-                <!--<td>{{ schedule.schedule }}</td>
-                <td>{{ schedule.coworker }}</td>-->
+                <td><a href="{% url 'scheduler:schedule_detail' schedule.num %}">{{ schedule.title }}</a></td>
                 <td>{{ schedule.start_date }}</td>
                 <td>{{ schedule.end_date }}</td>
-                <!--<td>{{ schedule.regdate }}</td>-->
                 <td>{{ schedule.updates }}</td>
             </tr>
             {% endfor %}

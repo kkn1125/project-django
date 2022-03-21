@@ -1,0 +1,23 @@
+{% extends '../layout.html' %}
+{% load bootstrap5 %}
+{% block content %}
+
+<div class="container my-3">
+    <h2 class="py2">num: {{ schedule.num }}</h2>
+    <h2 class="py2">room_num: {{ schedule.room_num }}</h2>
+    <h2 class="py2">user_num: {{ schedule.user_num }}</h2>
+    <h2 class="py2">분류: {{ schedule.category }}</h2>
+    <h2 class="py2">제목: {{ schedule.title }}</h2>
+    <h2 class="py2">일정 내용: {{ schedule.schedule }}</h2>
+    <h2 class="py2">동료: {{ schedule.coworker }}</h2>
+    <h2 class="py2">시작일: {{ schedule.start_date }}</h2>
+    <h2 class="py2">종료일: {{ schedule.end_date }}</h2>
+    <h2 class="py2">최종 수정일: {{ schedule.updates }}</h2>
+    
+    <div class="my-3">
+        <a href="{% url 'scheduler:schedule_update' schedule.num %}" class="btn btn-sm btn-outline-secondary">수정</a>
+        <a href="{% url 'scheduler:schedule_delete' schedule.num %}" class="delete btn btn-sm btn-outline-secondary">삭제</a>
+    </div>
+</div>
+
+{% endblock content %}
