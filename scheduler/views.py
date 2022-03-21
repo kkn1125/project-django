@@ -1,38 +1,27 @@
-from calendar import calendar
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
-from django.contrib.auth import views as auth_views
 from .forms import CalendarForm, UserForm
 from .models import User, Room, Calendar
+# from django.contrib.auth import views as auth_views
 
-# def path_type(request):
-#     if request.path.split('/')[-1] == '':
-#         return 'Home'
-#     elif request.path.split('/')[-1] == 'schedule':
-#         return 'Schedule'
+def path_type(request):
+    if request.path.split('/')[-1] == '':
+        return 'Home'
+    elif request.path.split('/')[-1] == 'schedule':
+        return 'Schedule'
 
 # Create your views here.
-# @api_view(['GET'])
-# def index(request):
-#     room_list = Room.objects.order_by('regdate')
+@api_view(['GET'])
+def index(request):
+    room_list = Room.objects.order_by('regdate')
     
-#     context = {
-#         'path_type': path_type(request),
-#         'room_list': room_list,
-#     }
+    context = {
+        'path_type': path_type(request),
+        'room_list': room_list,
+    }
     
-#     return render(request, 'scheduler/index.html', context)
+    return render(request, 'scheduler/index.html', context)
 
-# @api_view(['GET'])
-# def schedule(request):
-#     user = User.objects.all()
-    
-#     context = {
-#         'path_type': path_type(request),
-#         'schedule': user
-#     }
-
-#     return render(request, 'scheduler/schedule.html', context)
 
 def read(reqeust):
     '''
