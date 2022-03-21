@@ -1,45 +1,52 @@
 from django import forms
 from django.forms import ModelForm, NumberInput
 from .models import *
-from django import forms
 
 class UserForm(ModelForm):
     class Meta:
         model = User
         fields = [
-            'profile', 'nickname', 'email', 'password'#, 'updates'
+            'profile', 'nickname', 'email', 'password'
             ]
+        
+class LoginForm(ModelForm):
+    # email = forms.CharField(required=False)
+    # password = forms.CharField(required=False)
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if "@" not in data:
+            raise forms.ValidationError("이메일 형식과 다릅니다.")
 
+        # Always return a value to use as the new cleaned data, even if
+        # this method didn't change it.
+        return data
+    
+    class Meta:
+        model = User
+        fields = [
+            'email', 'password'
+            ]
+    
 class RoomForm(ModelForm):
     class Meta:
         model = Room
         fields = [
-            'title'#, 'master',  'email', 'password'#, 'updates'
+            'title'
             ]
-        # widgets = {
-        #     'master': NumberInput(
-        #         attrs = {
-        #             'hidden': True
-        #         }
-        #         )
-        #     }
 
 class UserInRoomForm(ModelForm):
     class Meta:
         model = UserInRoom
         fields = [
-            'room_num', 'user_num'#, 'email', 'password'#, 'updates'
+            'room_num', 'user_num'
             ]
 
-class CalendarForm(forms.ModelForm):
+class CalendarForm(ModelForm):
     class Meta:
         model = Calendar
         fields = [
-            'room_num', 'user_num', 'category', 'title', 'schedule', 'coworker', 'start_date', 'end_date'#, 'updates'
+            'room_num', 'user_num', 'category', 'title', 'schedule', 'coworker', 'start_date', 'end_date'
             ]
         widgets = {
-            'category': forms.TextInput(attrs={'class': 'form-control'}),
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'schedule': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
-            'coworker': forms.TextInput(attrs={'class': 'form-control'}),
+            'schedule': forms.Textarea(attrs={'rows': 10}),
         }
