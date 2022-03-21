@@ -20,6 +20,7 @@ def signin(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
+
             result = True
             if User.objects.filter(email=email).exists():
                     user = User.objects.get(email=email)
