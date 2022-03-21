@@ -26,6 +26,34 @@ class LoginForm(ModelForm):
         fields = [
             'email', 'password'
             ]
+        
+class FindForm(ModelForm):
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if "@" not in data:
+            raise forms.ValidationError("이메일 형식과 다릅니다.")
+
+        return data
+    
+    class Meta:
+        model = User
+        fields = [
+            'nickname', 'email'#, 'password'
+            ]
+        
+class CheckForm(ModelForm):
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if "@" not in data:
+            raise forms.ValidationError("이메일 형식과 다릅니다.")
+
+        return data
+    
+    class Meta:
+        model = User
+        fields = [
+            'email'#, 'password'
+            ]
     
 class RoomForm(ModelForm):
     class Meta:

@@ -10,8 +10,8 @@
                         <!-- title -->
                         <div class="d-md-flex">
                             <div>
-                                <h4 class="card-title">Top Selling Products</h4>
-                                <h5 class="card-subtitle">Overview of Top Selling Items</h5>
+                                <h4 class="card-title">현재 {{request.session.sign.nickname}}님이 공유 중인 스케쥴러</h4>
+                                <h5 class="card-subtitle">{{request.session.sign.nickname}}님은 {{request.session.sign.num|user_in_room_count}}개 스케쥴러에 참여 중입니다.</h5>
                             </div>
                             <div class="ms-auto">
                                 <div class="dl">
@@ -25,7 +25,7 @@
                             </div>
                             {% if request.session.sign %}
                             <div class="ms-3">
-                                <a class="btn btn-info" href="{% url 'room:create' %}">Create room</a>
+                                <a class="btn btn-info" href="{% url 'room:create' %}">방 생성</a>
                             </div>
                             {% endif %}
                         </div>
@@ -34,10 +34,10 @@
                             <table class="table mb-0 table-hover align-middle text-nowrap">
                                 <thead>
                                     <tr>
-                                        <th class="border-top-0">Title</th>
-                                        <th class="border-top-0">Participants</th>
-                                        <th class="border-top-0">Master</th>
-                                        <th class="border-top-0">Menu</th>
+                                        <th class="border-top-0">방 이름</th>
+                                        <th class="border-top-0">인원</th>
+                                        <th class="border-top-0">방장</th>
+                                        <th class="border-top-0">옵션</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -45,8 +45,10 @@
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="m-r-10"><a
-                                                        class="btn btn-circle d-flex btn-info text-white">EA</a>
+                                                <div class="m-r-10">
+                                                    {% with room.master|find_user as user %}
+                                                    <a class="btn btn-circle d-flex btn-info text-white">{{user.nickname|first_word|upper}}</a>
+                                                    {% endwith %}
                                                 </div>
                                                 <div class="">
                                                     <h4 class="m-b-0 font-16 fw-bold">{{room.title}}</h4>
@@ -60,12 +62,13 @@
 
                                         {% with room.master|find_user as user %}
                                         <td>
-                                            <label class="badge bg-danger">{{user.nickname}}</label>
+                                            <label class="badge bg-danger">{{user.nickname|capitalize}}</label>
                                         </td>
                                         {% endwith %}
                                         <td>
                                             {% if request.session.sign.num == room.master %}
-                                            <button class="btn btn-success">🛠</button>
+                                            <a href="{% url 'room:enter' room_num=room.num %}" class="btn btn-success">👈 Enter</a>
+                                            <a href="{% url 'room:edit' room_num=room.num %}" class="btn btn-success">🛠</a>
                                             <form class="d-inline-block" action="{% url 'room:delete' room_num=room.num %}" method="post">
                                                 <button class="btn btn-danger">&times;</button>
                                             </form>
