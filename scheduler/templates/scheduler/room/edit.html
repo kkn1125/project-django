@@ -1,0 +1,13 @@
+{% extends '../layout.html' %}
+{% load bootstrap5 %}
+{% block content %}
+<div class="container-fluid">
+    
+    <form action="{% url 'room:edit' room_num=room.num %}" method="post">
+        {% bootstrap_form roomForm %}
+        <input name="master" type="number" ghost value="{{request.session.sign.num}}">
+        <button class="btn btn-info" type="submit">Edit Room</button>
+    </form>
+
+</div>
+{% endblock content %}
