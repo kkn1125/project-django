@@ -56,23 +56,43 @@ def join_room(request, room_num):
     return redirect('/?success=2')
 
 @api_view(['POST'])
-def out_room(request, room_num):
+def out_room(request):
     user_num = request.POST['user_num']
     
     UserInRoom.objects.filter(user_num=user_num).delete()
     
     return redirect('/?success=3')
     
+@api_view(['GET', 'POST'])
+def edit(request, room_num):
+    room = Room.objects.get(num=room_num)
+    
+    if request.method == 'POST':
+        room.title = request.POST['title']
+        room.master = request.POST['master']
+        
+        room.save()
+        
+        return redirect('scheduler:index')
+    else:
+        if Room.objects.filter(num=room_num).exists():
+            context = {
+                'roomForm': RoomForm(instance=room),
+                'room': room
+            }
+            return render(request, 'scheduler/room/edit.html', context)
+        else: redirect('/?error=3')
+
 @api_view(['POST'])
 def delete(request, room_num):
     room = Room.objects.filter(num=room_num)
     
     uir = UserInRoom.objects.filter(room_num=room_num)
     
-    room.delete()
-    uir.delete()
+    if room.exists(): room.delete()
+    if uir.exists(): uir.delete()
     
-    return redirect('index')
+    return redirect('scheduler:index')
     
 @api_view(['GET'])
 def enter_room(request, room_num):

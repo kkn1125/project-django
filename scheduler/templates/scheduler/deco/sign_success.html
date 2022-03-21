@@ -17,6 +17,12 @@
         msg: '방에서 나갔습니다.',
         auto: true,
     }
+    {% elif request.GET.success == '4' %}
+    {
+        title: 'System',
+        msg: '일치하는 유저 정보가 있습니다.',
+        auto: true,
+    }
     {% else %}
     {}
     {% endif %}
