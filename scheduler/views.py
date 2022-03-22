@@ -1,12 +1,10 @@
-from ast import Num
 from calendar import calendar
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from rest_framework.decorators import api_view
-from django.contrib.auth import views as auth_views
-from .forms import CalendarForm, UserForm
+from .forms import CalendarForm
 from .models import User, Room, Calendar
+# from django.contrib.auth import views as auth_views
 
 def path_type(request):
     if request.path.split('/')[-1] == '':
