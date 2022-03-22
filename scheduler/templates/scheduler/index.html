@@ -10,8 +10,13 @@
                         <!-- title -->
                         <div class="d-md-flex">
                             <div>
+                                {% if request.session.sign %}
                                 <h4 class="card-title">현재 {{request.session.sign.nickname}}님이 공유 중인 스케쥴러</h4>
                                 <h5 class="card-subtitle">{{request.session.sign.nickname}}님은 {{request.session.sign.num|user_in_room_count}}개 스케쥴러에 참여 중입니다.</h5>
+                                {% else %}
+                                <h4 class="card-title">공유 스케쥴러입니다.</h4>
+                                <h5 class="card-subtitle">팀과 함께 스케쥴러에 참여 해보세요😉</h5>
+                                {% endif %}
                             </div>
                             <div class="ms-auto">
                                 <div class="dl">

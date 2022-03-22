@@ -1,5 +1,4 @@
-from django import forms
-from django.forms import ModelForm, NumberInput
+from django.forms import DateInput, ModelForm, Textarea, ValidationError
 from .models import *
 
 class UserForm(ModelForm):
@@ -15,7 +14,7 @@ class LoginForm(ModelForm):
     def clean_email(self):
         data = self.cleaned_data['email']
         if "@" not in data:
-            raise forms.ValidationError("이메일 형식과 다릅니다.")
+            raise ValidationError("이메일 형식과 다릅니다.")
 
         # Always return a value to use as the new cleaned data, even if
         # this method didn't change it.
@@ -31,7 +30,7 @@ class FindForm(ModelForm):
     def clean_email(self):
         data = self.cleaned_data['email']
         if "@" not in data:
-            raise forms.ValidationError("이메일 형식과 다릅니다.")
+            raise ValidationError("이메일 형식과 다릅니다.")
 
         return data
     
@@ -45,7 +44,7 @@ class CheckForm(ModelForm):
     def clean_email(self):
         data = self.cleaned_data['email']
         if "@" not in data:
-            raise forms.ValidationError("이메일 형식과 다릅니다.")
+            raise ValidationError("이메일 형식과 다릅니다.")
 
         return data
     
@@ -76,5 +75,13 @@ class CalendarForm(ModelForm):
             'room_num', 'user_num', 'category', 'title', 'schedule', 'coworker', 'start_date', 'end_date'
             ]
         widgets = {
-            'schedule': forms.Textarea(attrs={'rows': 10}),
+            'schedule': Textarea(attrs={'rows': 10}),
+            'start_date': DateInput(attrs={'type': 'date'}),
+            'end_date': DateInput(attrs={'type': 'date'}),
         }
+    # def clean_coworker(self):
+    #     data = self.cleaned_data['coworker']
+    #     if "," in data:
+    #         raise forms.ValidationError("콤마 멈춰!")
+
+    #     return data

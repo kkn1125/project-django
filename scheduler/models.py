@@ -6,7 +6,7 @@ class User(models.Model):
     num = models.AutoField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
     profile = models.ImageField(upload_to="", null=True, blank=True)
-    nickname = models.CharField(max_length=45, null=False)
+    nickname = models.CharField(max_length=45, null=False, unique=True)
     email = models.CharField(max_length=45, null=False)
     password = models.CharField(max_length=45, null=False)
     regdate = models.DateTimeField('created', default=timezone.now, editable=False, null=False, blank=False)
@@ -15,7 +15,7 @@ class User(models.Model):
 class Room(models.Model):
     num = models.AutoField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
-    master = models.IntegerField(null=False)
+    master = models.IntegerField(null=False, unique=True)
     title = models.CharField(max_length=45, null=False)
     regdate = models.DateTimeField('created', default=timezone.now, editable=False, null=False, blank=False)
     updates = models.DateTimeField('updated', default=timezone.now, editable=False, null=False, blank=False)
@@ -23,8 +23,10 @@ class Room(models.Model):
 class UserInRoom(models.Model):
     num = models.AutoField(primary_key=True)
     # primary_key를 지정해줘야 ~~.id field error가 나지 않는다.
-    room_num = models.IntegerField(null=False)
-    user_num = models.IntegerField(null=False)
+    # room_num = models.IntegerField(null=False, unique=True)
+    # user_num = models.IntegerField(null=False, unique=True)
+    room_num = models.ForeignKey(Room, on_delete=models.CASCADE, db_column='room_num')
+    user_num = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_num')
     regdate = models.DateTimeField('created', default=timezone.now, editable=False, null=False, blank=False)
     updates = models.DateTimeField('updated', default=timezone.now, editable=False, null=False, blank=False)
     
