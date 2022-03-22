@@ -1,6 +1,5 @@
-from calendar import calendar
 from django.shortcuts import render, redirect
-from django.utils import timezone
+# from django.utils import timezone
 from rest_framework.decorators import api_view
 from .forms import CalendarForm
 from .models import User, Room, Calendar
@@ -11,11 +10,11 @@ def path_type(request):
         return 'Home'
     elif request.path.split('/')[-1] == 'schedule':
         return 'Schedule'
-
+    
 @api_view(['GET'])
 def index(request):
     room_list = Room.objects.order_by('regdate')
-    
+
     context = {
         'path_type': path_type(request),
         'room_list': room_list,
@@ -61,7 +60,7 @@ def detail(request, schedule_num):
     '''
     schedule 내용 출력
     '''
-    schedule = Calendar.objects.get(num=schedule_num)
+    schedule = Calendar.objects.filter(pk=schedule_num).get(pk=schedule_num)
     context = {'schedule': schedule}
     return render(request, 'scheduler/scheduler/detail.html', context)
 
@@ -69,14 +68,15 @@ def update(request, schedule_num):
     '''
     schedule 내용 수정
     '''
-    calendar = Calendar.objects.get(pk=schedule_num)
+    calendar = Calendar.objects.filter(pk=schedule_num).get(pk=schedule_num)
     if request.method == 'POST':
         form = CalendarForm(request.POST, instance=calendar)
         if form.is_valid():
             calendar = form.save(commit=False)
-            calendar.updates = timezone.now()
+            # calendar.updates = timezone.now()
             calendar.save()
-            return redirect ('scheduler:schedule_detail', schedule_num=calendar.num)
+            test=3
+            return redirect ('scheduler:schedule_detail', test, schedule_num=calendar.pk) # pk === num
     else:
         form = CalendarForm(instance=calendar)
     context = {'form': form}
@@ -86,6 +86,5 @@ def delete(request, schedule_num):
     '''
     schedule 삭제
     '''
-    calendar = Calendar.objects.get(pk=schedule_num)
-    calendar.delete()
+    Calendar.objects.filter(pk=schedule_num).delete()
     return redirect('scheduler:schedule_list')

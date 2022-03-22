@@ -3,10 +3,10 @@
 {% block content %}
 <div class="container">
     <h5 class="my-3 border-bottom pb-2">일정 등록</h5>
-    <form method="post" class="post-form my-3">
+    <form method="post" class="post-form my-3" novalidate>
         {% csrf_token %}
         <!-- 오류 표시 Start -->
-        {% if form.errors %}
+        {% comment %} {% if form.errors %}
         <div class="alert alert-danger" role="alert">
         {% for field in form %}
             {% if field.errors %}
@@ -15,40 +15,9 @@
             {% endif %}
         {% endfor %}
         </div>
-        {% endif %}
+        {% endif %} {% endcomment %}
         <!-- 오류 표시 End -->
-        <div class="form-group">
-            <label for="category">room_num</label>
-            <input type="number" class="form-control" name="room_num" id="room_num" value="{{ form.room_num.value }}">
-        </div>
-        <div class="form-group">
-            <label for="category">user_num</label>
-            <input type="number" class="form-control" name="user_num" id="user_num" value="{{ form.user_num.value }}">
-        </div>
-        <div class="form-group">
-            <label for="category">category</label>
-            <input type="text" class="form-control" name="category" id="category" value="{{ form.category.value }}">
-        </div>
-        <div class="form-group">
-            <label for="title">title</label>
-            <input type="text" class="form-control" name="title" id="title" value="{{ form.title.value }}">
-        </div>
-        <div class="form-group">
-            <label for="title">coworker</label>
-            <input type="text" class="form-control" name="coworker" id="coworker" value="{{ form.coworker.value }}">
-        </div>
-        <div class="form-group">
-            <label for="schedule">schedule</label>
-            <textarea class="form-control" name="schedule" id="schedule" rows="10">{{ form.schedule.value }}</textarea>
-        </div>
-        <div class="form-group">
-            <label for="title">start_date</label>
-            <input type="date" class="form-control" name="start_date" id="start_date" value="{{ form.start_date.value | date:"Y-m-d" }}">
-        </div>
-        <div class="form-group">
-            <label for="title">end_date</label>
-            <input type="date" class="form-control" name="end_date" id="end_date" value="{{ form.end_date.value | date:"Y-m-d"}}">
-        </div>
+        {% bootstrap_form form %}
         <button type="submit" class="btn btn-primary">저장하기</button>
     </form>
 </div>

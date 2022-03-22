@@ -37,14 +37,14 @@ def create(request):
         
         userInRoom.save()
         
-        return redirect('index')
+        return redirect('/')
     
 @api_view(['POST'])
 def join_room(request, room_num):
     user_num = request.POST['user_num']
     
-    if UserInRoom.objects.filter(user_num=user_num).exists():
-        return redirect('index')
+    if UserInRoom.objects.filter(room_num=room_num, user_num=user_num).exists():
+        return redirect('/')
     
     user_in_room = UserInRoom(
         user_num = user_num,
@@ -56,10 +56,10 @@ def join_room(request, room_num):
     return redirect('/?success=2')
 
 @api_view(['POST'])
-def out_room(request):
+def out_room(request, room_num):
     user_num = request.POST['user_num']
     
-    UserInRoom.objects.filter(user_num=user_num).delete()
+    UserInRoom.objects.filter(room_num=room_num, user_num=user_num).delete()
     
     return redirect('/?success=3')
     
