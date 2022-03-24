@@ -21,4 +21,22 @@
         <button type="submit" class="btn btn-primary">저장하기</button>
     </form>
 </div>
+
+<script>
+    const params = {};
+    const valid = location.search.slice(1).split('&').map(a=>a.split('=')).map(x=>{
+        params[x[0]] = x[1];
+    });
+
+    const start = document.getElementById('id_start_date');
+    const end = document.getElementById('id_end_date');
+    const rnum = document.getElementById('id_room_num');
+    const unum = document.getElementById('id_user_num');
+
+    start.value = params.s;
+    end.value = params.e;
+    rnum.value = params.r_num;
+
+    unum.value = "{{request.session.sign.num}}";
+</script>
 {% endblock content %}

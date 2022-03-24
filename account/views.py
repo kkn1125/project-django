@@ -1,8 +1,12 @@
+import ast
 from rest_framework.decorators import api_view
 # from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from scheduler.models import User
 from scheduler.forms import UserForm, LoginForm, FindForm, CheckForm
+
+from django.core import serializers
+from django.http import JsonResponse, HttpResponse
 
 def path_type(request):
     if request.path.split('/')[-1] == 'signin':
@@ -24,6 +28,13 @@ def auth_reset_pass(request):
     4. 확인되면 비밀번호를 새로 적는 칸을 보여주고 유저가 보낸 이메일의 데이터를 수정한다.
     5. 쿠키를 삭제하고, localStorage의 데이터도 삭제한다.
     """
+        
+@api_view(['GET'])
+def find_user(request):
+    user_nicks = [n.strip() for n in ast.literal_eval(request.GET['userlist'])]
+    users = User.objects.filter(nickname__in=user_nicks)
+    s_user = serializers.serialize('json', users)
+    return HttpResponse(s_user, content_type="text/json-comment-filtered")
         
 @api_view(['GET', 'POST'])
 def send_mail(request):
@@ -123,22 +134,30 @@ def signup(request):
 
 @api_view(['GET', 'POST'])
 def update(request, num):
-    context = {
-        'path_type': path_type(request),
-    }
-    
+    user = User.objects.filter(num=num).get(num=num)
+    origin_pass = user.password
     if request.method == 'GET':
+        context = {
+            'path_type': path_type(request),
+            'userForm': UserForm(instance=user),
+        }
         return render(request, 'scheduler/signup.html', context)
     else:
-        user = User.objects.get(num=num)
-        user.profile = request.FILES['profile']
-        user.nickname = request.POST['nickname']
-        user.email = request.POST['email']
-        user.password = request.POST['password']
-        
-        user.save()
-        
-        return redirect('account:signin')
+        userForm = UserForm(request.POST or None,
+                            request.FILES or None,
+                            instance=user)
+        if userForm.is_valid():
+            uf = userForm.save(commit=False) # 여기 하는 중
+            if not uf.password:
+                uf.password = origin_pass
+            request.session['sign'] = {
+                'nickname': uf.nickname,
+                'email': uf.email,
+                'profile': str(uf.profile),
+                'num': uf.num,
+            }
+            uf.save()
+        return redirect('account:update', user.pk)
 
 @api_view(['GET'])
 def signout(request):

@@ -1,12 +1,18 @@
-from django.forms import DateInput, ModelForm, Textarea, ValidationError
+from django.forms import CharField, DateInput, EmailInput, FileInput, ImageField, ModelForm, PasswordInput, TextInput, Textarea, ValidationError
 from .models import *
 
 class UserForm(ModelForm):
+    profile = ImageField(required=False, widget=FileInput(attrs={'type': 'file'}))
+    password = CharField(required=False, widget=PasswordInput(attrs={'type': 'password', 'autocomplete': 'current-password'}))
+    
     class Meta:
         model = User
         fields = [
             'profile', 'nickname', 'email', 'password'
             ]
+        widgets = {
+            'email': EmailInput(attrs={'autocomplete': 'username'}),
+        }
         
 class LoginForm(ModelForm):
     # email = forms.CharField(required=False)

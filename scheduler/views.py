@@ -3,6 +3,9 @@ from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from .forms import CalendarForm
 from .models import User, Room, Calendar
+
+from django.core import serializers
+from django.http import JsonResponse, HttpResponse
 # from django.contrib.auth import views as auth_views
 
 def path_type(request):
@@ -10,6 +13,15 @@ def path_type(request):
         return 'Home'
     elif request.path.split('/')[-1] == 'schedule':
         return 'Schedule'
+    
+# @api_view(['GET'])
+# def test(request):
+    
+#     context = {
+#         'test': 1,
+#     }
+    
+#     return render(request, 'scheduler/sample.html', context)
     
 @api_view(['GET'])
 def index(request):
@@ -33,6 +45,18 @@ def schedule(request):
 
     return render(request, 'scheduler/schedule.html', context)
 
+def calendar_list(reqeust):
+    '''
+    schedule 목록
+    '''
+    schedule_list = Calendar.objects.order_by('regdate')
+    
+    # 밑에 과정들
+    # https://dev-yakuza.posstree.com/ko/django/response-model-to-json/ [ 참조 ]
+    
+    list = serializers.serialize('json', schedule_list)
+    return HttpResponse(list, content_type="text/json-comment-filtered")
+
 def list(reqeust):
     '''
     schedule 목록
@@ -50,7 +74,7 @@ def create(request):
         if form.is_valid():
             calendar = form.save(commit=False)
             calendar.save()
-            return redirect ('scheduler:schedule_create')
+            return redirect ('scheduler:schedule_list')
     else:
         form = CalendarForm()
     context = {'form': form}
@@ -75,8 +99,7 @@ def update(request, schedule_num):
             calendar = form.save(commit=False)
             # calendar.updates = timezone.now()
             calendar.save()
-            test=3
-            return redirect ('scheduler:schedule_detail', test, schedule_num=calendar.pk) # pk === num
+            return redirect ('scheduler:schedule_detail', schedule_num=calendar.pk) # pk === num
     else:
         form = CalendarForm(instance=calendar)
     context = {'form': form}

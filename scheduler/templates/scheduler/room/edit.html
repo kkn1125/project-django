@@ -1,12 +1,89 @@
 {% extends '../layout.html' %}
+{% load customs %}
 {% load bootstrap5 %}
 {% block content %}
 <div class="container-fluid">
-    
+    {% set request.path|split:'/'|arr_trim:''|last as rnum %}
+    {% if rnum|is_number %}
+    <form action="{% url 'room:create' %}" method="post">
+    {% else %}
     <form action="{% url 'room:edit' room_num=room.num %}" method="post">
+    {% endif %}
         {% bootstrap_form roomForm %}
+        
+        <div class="mb-3"><label class="form-label" for="id_title">Invite</label>
+            <input type="text" name="invite" value="" maxlength="100" class="mb-3 form-control" placeholder='초대 인원을 ","로 구분해서 작성해주세요.' title="" id="invite">
+            <div id="alert-info"></div>
+        </div>
+
+        {% if not rnum|is_number %}
+        <div class="mb-5">
+            <span class="badge bg-info">참여인원</span>
+            {% for user in rnum|room_user|to_nickname %}
+            <span class="badge text-dark">{{user}}</span>
+            {% endfor %}
+        </div>
+        <script>
+            invite.addEventListener('input', e=>{
+                let users = invite.value.split(',').map(x=>x.trim()).filter(x=>x);
+                axios({
+                    method: 'get',
+                    url: '/common/finduser',
+                    params: {
+                        userlist: JSON.stringify(users)
+                    },
+                }).then(res=>{
+                    let target = document.querySelector('#alert-info');
+                    let temp = '';
+                    const render = (type, isuser) => {
+                        // setTimeout(()=>{
+                        //     if(temp==target.innerHTML)
+                        //     target.innerHTML = '';
+                        // }, 3000);
+                        if(type == -1) {
+                            target.innerHTML = '';
+                            return;
+                        }
+                        if(type == 1){
+                            target.innerHTML = `<div class="alert alert-info">모든 초대 인원의 정보가 확인 되었습니다.</div>`;
+                        } else if(type == 0){
+                            target.innerHTML = `<div class="alert alert-danger">확인되지 않은 회원 정보가 존재합니다. 다시 한 번 확인하시기 바랍니다.</div>`;
+                        } else if(type == -1){
+                            target.innerHTML = ``;
+                        } else if(type == -2){
+                            target.innerHTML = `<div class="alert alert-warning">${isuser}님은 이미 방에 참여하고 있습니다.</div>`;
+                        }
+                        
+                        temp = target.innerHTML;
+                    }
+
+                    let is_users = res.data.map(x=>x.fields.nickname);
+                    let room_users = '{{rnum|room_user|to_nickname|join:','}}'.split(',');
+                    let nosubmit = false;
+                    if(res.data.length != users.length){
+                        render(0);
+                        nosubmit = true;
+                    } else if(room_users.filter(a=>is_users.indexOf(a)>-1).length){
+                        let filtered = room_users.filter(a=>is_users.indexOf(a)>-1);
+                        render(-2, filtered);
+                        nosubmit = true;
+                    } else if(res.data == 0) {
+                        render(-1);
+                        nosubmit = false;
+                    } else {
+                        render(1);
+                        nosubmit = false;
+                    }
+
+                    if(nosubmit) edit.disabled = true;
+                    else edit.removeAttribute('disabled')
+                })
+            });
+        </script>
+        {% endif %}
+        
         <input name="master" type="number" ghost value="{{request.session.sign.num}}">
-        <button class="btn btn-info" type="submit">Edit Room</button>
+        <button id="edit" class="btn btn-info" type="submit">Edit Room</button>
     </form>
 
 </div>

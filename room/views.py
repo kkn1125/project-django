@@ -18,7 +18,7 @@ def create(request):
             'path_type': path_type(request),
             'roomForm': roomForm
         }
-        return render(request, 'scheduler/room/create.html', context)
+        return render(request, 'scheduler/room/edit.html', context)
     elif request.method == 'POST':
         title = request.POST['title']
         master = request.POST['master']

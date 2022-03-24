@@ -1,7 +1,24 @@
 from django import template
 from ..models import User, UserInRoom
+from django.core import serializers
 
 register = template.Library()
+
+@register.simple_tag
+def set(value=None):
+    return value
+
+@register.filter(name='is_number')
+def is_number(value):
+    return not str.isdecimal(value)
+
+@register.filter(name='split')
+def split(value, key):
+    return value.split(key)
+
+@register.filter(name='arr_trim')
+def arr_trim(value, key):
+    return list(filter(lambda x: x != key, value))
 
 @register.filter(name='capitalize')
 def capitalize(value):
@@ -13,6 +30,22 @@ def first_word(value):
         return value[0]
     else:
         return value
+
+@register.filter(name='room_user')
+def room_user(value):
+    temp = UserInRoom.objects.filter(room_num=value)
+    if temp.exists():
+        users = [i.get('user_num_id') for i in list(temp.values())]
+        return users
+    return ''
+
+@register.filter(name='to_nickname')
+def to_nickname(value):
+    temp = User.objects.filter(num__in=value)
+    if temp.exists():
+        users = [i.get('nickname') for i in list(temp.values())]
+        return users
+    return ''
 
 @register.filter(name='user_in_room_count')
 def user_in_room_count(value):
