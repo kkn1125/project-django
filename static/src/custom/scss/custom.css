@@ -4,4 +4,6 @@ body { position: relative; }
 
 #relProfile { cursor: pointer; object-fit: cover; }
 
+#calendar { position: relative; }
+
 /*# sourceMappingURL=custom.css.map */

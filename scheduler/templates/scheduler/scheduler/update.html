@@ -6,9 +6,11 @@
     <h5 class="my-3 border-bottom pb-2">일정 등록</h5>
     <form method="post" class="post-form my-3" novalidate>
         {% csrf_token %}
-        {% set 'start_date/'|add:request.GET.s as start_date %}
-        {% set 'end_date/'|add:request.GET.e as end_date %}
-        {% bootstrap_form form|form_value:start_date|form_value:end_date  %}
+        
+        {% set calendar.start_date|date:'Y-m-d\TH:i' as start_date %}
+        {% set calendar.end_date|date:'Y-m-d\TH:i' as end_date %}
+
+        {% bootstrap_form form %}
         <input type="number" ghost name="room_num" value="{{request.GET.r_num}}">
         <input type="number" ghost name="user_num" value="{{request.session.sign}}">
         <button type="submit" class="btn btn-primary">저장하기</button>
@@ -16,10 +18,10 @@
 </div>
 
 <script>
-    //const rnum = document.getElementById('id_room_num');
-    //const unum = document.getElementById('id_user_num');
-//
-    //rnum.value = '{{request.GET.r_num}}';
-    //unum.value = "{{request.session.sign}}";
+    const start = document.getElementById('id_start_date');
+    const end = document.getElementById('id_end_date');
+
+    start.value = '{{start_date}}';
+    end.value = "{{end_date}}";
 </script>
 {% endblock content %}

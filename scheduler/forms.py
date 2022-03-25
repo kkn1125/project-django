@@ -82,9 +82,11 @@ class CalendarForm(ModelForm):
     class Meta:
         model = Calendar
         fields = [
-            'room_num', 'user_num', 'category', 'title', 'schedule', 'coworker', 'start_date', 'end_date'
+            'category', 'title', 'schedule', 'coworker', 'start_date', 'end_date'#, 'room_num', 'user_num', 
             ]
         widgets = {
+            # 'room_num': TextInput(attrs={'ghost':''}),
+            # 'user_num': TextInput(attrs={'ghost':''}),
             'schedule': Textarea(attrs={'rows': 10}),
             'start_date': DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_date': DateTimeInput(attrs={'type': 'datetime-local'}),

@@ -62,11 +62,13 @@ def create(request):
     '''
     if request.method == 'POST':
         form = CalendarForm(request.POST)
-        start_date = request.POST['start_date']
-        start_time = request.POST['start_time']
-
         if form.is_valid():
             calendar = form.save(commit=False)
+            
+            # modelForm에 해당되지 않는 필드는 자동 할당되지 않는다.
+            # 수동으로 할당해야하고, 그러지 않으면 null값을 할당한다.
+            calendar.room_num_id = request.POST['room_num']
+            calendar.user_num = request.POST['user_num']
             
             calendar.start_date = str(calendar.start_date).replace('+09:00','+00:00')
             calendar.end_date = str(calendar.end_date).replace('+09:00','+00:00')
@@ -96,17 +98,23 @@ def update(request, schedule_num):
         form = CalendarForm(request.POST, instance=calendar)
         if form.is_valid():
             calendar = form.save(commit=False)
-            # calendar.updates = timezone.now()
             calendar.save()
-            return redirect ('scheduler:schedule_detail', schedule_num=calendar.pk) # pk === num
+            return redirect ('room:enter', room_num=calendar.room_num_id)
     else:
         form = CalendarForm(instance=calendar)
-    context = {'form': form}
-    return render(request, 'scheduler/scheduler/create.html', context)
+    print(calendar.start_date)
+    context = {'form': form, 'calendar':calendar}
+    return render(request, 'scheduler/scheduler/update.html', context)
 
+@api_view(['POST'])
 def delete(request, schedule_num):
     '''
     schedule 삭제
     '''
-    Calendar.objects.filter(pk=schedule_num).delete()
-    return redirect('scheduler:schedule_list')
+    cal = Calendar.objects.filter(pk=schedule_num)
+    
+    room_num = cal[0].room_num_id
+    
+    cal.delete()
+    
+    return redirect('room:enter', room_num=room_num)
