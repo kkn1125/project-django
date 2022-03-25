@@ -1,20 +1,18 @@
 let calendar;
 
-function popupUpdateModal(data, send) {
+function popupUpdateModal({num}) {
     const div = document.createElement('div');
     div.id = 'calPopup';
-    div.innerHTML = `
-    ${Object.keys(data).map(x=>`
-            <div>
-                <span>${x}</span>
-                <input name="${x}" type="${x=='title'?'text':'datetime-local'}" value="${data[x]+(x=='title' || data[x].match(/T/g)?'':'T00:00')}">
-            </div>
-        `).join('')+`<div>
-            <button id="add" class="btn btn-info">
-                add
+    div.innerHTML = `<div>
+        <button onclick="location='/list/update/${num}/'" id="edit" class="btn btn-info">
+            edit
+        </button>
+        <form action="/list/delete/${num}/" method="post">
+            <button id="delete" class="btn btn-danger">
+                delete
             </button>
-        </div>`}
-    `;
+        </form>
+    </div>`;
     div.style.cssText = `
         background-color: white;
         position: absolute;
@@ -27,12 +25,21 @@ function popupUpdateModal(data, send) {
         box-shadow: 0 0 1rem 0  rgba(0,0,0,0.5);
     `;
     document.body.append(div);
-    document.getElementById('add').addEventListener('click', handleAdd);
+    document.getElementById('edit').addEventListener('click', handleEdit);
+    document.getElementById('delete').addEventListener('click', handleDelete);
 
-    function handleAdd(e) {
-        send(document.querySelector('input[name="title"]').value);
-        div ?.remove();
-        removeEventListener('click', handleAdd);
+    function handleEdit(e) {
+        setTimeout(() => {
+            div?.remove();
+        }, 100);
+        removeEventListener('click', handleEdit);
+    }
+
+    function handleDelete(e) {
+        setTimeout(() => {
+            div?.remove();
+        }, 100);
+        removeEventListener('click', handleDelete);
     }
 }
 
@@ -94,14 +101,13 @@ document.addEventListener('DOMContentLoaded', function () {
             data: {}
         }).then(function (response) {
             datas = response.data;
-            console.log(datas)
-
             datas = datas.map(x=>{
-                return {
-                    title: x.fields.title,
-                    start: x.fields.start_date,
-                    end: x.fields.end_date,
-                }
+                x.fields['num'] = x.pk;
+                x.fields['start'] = x.fields['start_date'];
+                delete x.fields['start_date'];
+                x.fields['end'] = x.fields['end_date'];
+                delete x.fields['end_date'];
+                return x.fields;
             });
 
             // 이벤트 추가 - fullcalendar
@@ -143,18 +149,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     location.href = `/create/?s=${padDate(info.startStr)}&e=${padDate(info.endStr)}&r_num=${location.href.split('/').pop()}`;
             },
             eventClick: function (info) {
-                console.log(info.event)
                 if (!document.querySelector('#calPopup'))
-                    popupUpdateModal({
-                        title: info.event.title,
-                    }, send);
-                function send(data) {
-                    info.event.setProp('title', data)
-                }
+                    popupUpdateModal(info.event._def.extendedProps);
+                // function send(data) {
+                //     info.event.setProp('title', data)
+                // }
             },
             eventChange: function (info) {
                 // console.log(info)
             },
+            eventMouseEnter: function(info) {
+                const {category, coworker, regdate, room_num, schedule, title, updates, user_num} = info.event._def.extendedProps;
+                const {startStr:start, endStr:end} = info.event;
+
+                // document.querySelector('#calendar').insertAdjacentHTML('beforeend', `<div class="position-fixed top-50 popover show" role="tooltip" id="popover267739" style="top: ${top-y}px; left: ${left}px; display: block;"><div class="arrow" style="left: 50%;"></div><h3 class="popover-title"><div class="popoverTitleCalendar" style="background: rgb(151, 117, 250); color: rgb(255, 255, 255);">${title}</div></h3><div class="popover-content"><div class="popoverInfoCalendar"><p><strong>등록자:</strong> ${coworker.split(',').map(x=>`<span class="badge bg-info">${x}</span>`).join('')}</p><p><strong>구분:</strong> ${category}</p><p><strong>시간:</strong> ${start} ~ ${end}</p><div class="popoverDescCalendar"><strong>설명:</strong>${schedule}</div></div></div></div>`)
+            },
+            eventMouseLeave: function (info) {
+                document.querySelectorAll('.popover').forEach(e=>e.remove());
+            }
         });
 
         setTimeout(() => {

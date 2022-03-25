@@ -53,7 +53,7 @@ def form_value(value, key):
     keys = key.split('/')[0]
     vals = key.split('/')[1]
     print(vals)
-    value.initial.setdefault(keys, vals)
+    value.initial.setdefault(keys, str(vals))
     return value
 
 @register.filter(name='is_number')
