@@ -2,116 +2,129 @@
 {% load customs %}
 {% block content %}
 <div class="container-fluid">
-        <div class="row">
-            <!-- column -->
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <!-- title -->
-                        <div class="d-md-flex">
-                            <div>
-                                {% if request.session.sign %}
-                                <h4 class="card-title">현재 {{request.session.sign.nickname}}님이 공유 중인 스케쥴러</h4>
-                                <h5 class="card-subtitle">{{request.session.sign.nickname}}님은 {{request.session.sign.num|user_in_room_count}}개 스케쥴러에 참여 중입니다.</h5>
-                                {% else %}
-                                <h4 class="card-title">공유 스케쥴러입니다.</h4>
-                                <h5 class="card-subtitle">팀과 함께 스케쥴러에 참여 해보세요😉</h5>
-                                {% endif %}
-                            </div>
-                            <div class="ms-auto">
-                                <div class="dl">
-                                    <select class="form-select shadow-none">
-                                        <option value="0" selected>Monthly</option>
-                                        <option value="1">Daily</option>
-                                        <option value="2">Weekly</option>
-                                        <option value="3">Yearly</option>
-                                    </select>
-                                </div>
-                            </div>
+    <div class="row">
+        <!-- column -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <!-- title -->
+                    <div class="d-md-flex justify-content-between">
+                        <div>
                             {% if request.session.sign %}
-                            <div class="ms-3">
-                                <a class="btn btn-info" href="{% url 'room:create' %}">방 생성</a>
-                            </div>
+                            {% set request.session.sign|user_in_room_count as room_count %}
+                            {% set request.session.sign|user_nickname as nickname %}
+                            <h4 class="card-title">현재 {{nickname}}님이 공유 중인 스케쥴러</h4>
+                            {% if room_count > 0 %}
+                            <h5 class="card-subtitle">{{nickname}}님은 {{room_count}}개 스케쥴러에 참여 중입니다.
+                            </h5>
+                            {% else %}
+                            <h5 class="card-subtitle">아직 참여한 스케쥴러가 없습니다.</h5>
+                            {% endif %}
+                            {% else %}
+                            <h4 class="card-title">공유 스케쥴러입니다.</h4>
+                            <h5 class="card-subtitle">팀과 함께 스케쥴러에 참여 해보세요😉</h5>
                             {% endif %}
                         </div>
-                        <!-- title -->
-                        <div class="table-responsive">
-                            <table class="table mb-0 table-hover align-middle text-nowrap">
-                                <thead>
-                                    <tr>
-                                        <th class="border-top-0">방 이름</th>
-                                        <th class="border-top-0">인원</th>
-                                        <th class="border-top-0">방장</th>
-                                        <th class="border-top-0">옵션</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for room in room_list %}
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="m-r-10">
-                                                    {% with room.master|find_user as user %}
-                                                    <a class="btn btn-circle d-flex btn-info text-white">{{user.nickname|first_word|upper}}</a>
-                                                    {% endwith %}
-                                                </div>
-                                                <div class="">
-                                                    <h4 class="m-b-0 font-16 fw-bold">{{room.title}}</h4>
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        {% with room.num|user_count as count %}
-                                        <td>{{count}}</td>
-                                        {% endwith %}
-
-                                        {% with room.master|find_user as user %}
-                                        <td>
-                                            <label class="badge bg-danger">{{user.nickname|capitalize}}</label>
-                                        </td>
-                                        {% endwith %}
-                                        <td>
-                                            {% if request.session.sign.num == room.master %}
-                                            <a href="{% url 'room:enter' room_num=room.num %}" class="btn btn-success">👈 Enter</a>
-                                            <a href="{% url 'room:edit' room_num=room.num %}" class="btn btn-success">🛠</a>
-                                            <form class="d-inline-block" action="{% url 'room:delete' room_num=room.num %}" method="post">
-                                                <button class="btn btn-danger">&times;</button>
-                                            </form>
-                                            {% else %}
-                                                {% if room.num|is_crew:request.session.sign.num %}
-                                                <a href="{% url 'room:enter' room_num=room.num %}" class="btn btn-success">👈 Enter</a>
-                                                <form class="d-inline-block" action="{% url 'room:out' room_num=room.num %}" method="post">
-                                                    <input type="hidden" name="user_num" value="{{request.session.sign.num}}">
-                                                    <button type="submit" class="btn btn-danger">👋 Out</button>
-                                                </form>
-                                                {% else %}
-                                                {% if request.session.sign %}
-                                                <form class="d-inline-block" action="{% url 'room:join' room_num=room.num %}" method="post">
-                                                    <input type="hidden" name="user_num" value="{{request.session.sign.num}}">
-                                                    <button type="submit" class="btn btn-info">👈 Join the room</button>
-                                                </form>
-                                                {% else %}
-                                                <button onclick="alert('로그인이 필요합니다.')" class="btn btn-info">👈 Join the room</button>
-                                                {% endif %}
-                                                {% endif %}
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% empty %}
-                                    <tr>
-                                        <td colspan="4">
-                                            <div class="alert alert-warning">
-                                                참여 가능한 방이 없습니다.
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                        {% comment %} <div class="ms-auto">
+                            <div class="dl">
+                                <select class="form-select shadow-none">
+                                    <option value="0" selected>Monthly</option>
+                                    <option value="1">Daily</option>
+                                    <option value="2">Weekly</option>
+                                    <option value="3">Yearly</option>
+                                </select>
+                            </div>
+                        </div> {% endcomment %}
+                        {% if request.session.sign %}
+                        <div class="ms-3">
+                            <a class="btn btn-info" href="{% url 'room:create' %}">방 생성</a>
                         </div>
+                        {% endif %}
+                    </div>
+                    <!-- title -->
+                    <div class="table-responsive">
+                        <table class="table mb-0 table-hover align-middle text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th class="border-top-0">방 이름</th>
+                                    <th class="border-top-0">인원</th>
+                                    <th class="border-top-0">방장</th>
+                                    <th class="border-top-0">옵션</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for room in room_list %}
+                                {% set room.master|find_user as user %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="m-r-10">
+                                                <a class="btn btn-circle d-flex btn-info text-white">{{user.nickname|first_word|upper}}</a>
+                                            </div>
+                                            <div class="">
+                                                <h4 class="m-b-0 font-16 fw-bold">{{room.title}}</h4>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    {% with room.num|user_count as count %}
+                                    <td>{{count}}</td>
+                                    {% endwith %}
+
+                                    {% with room.master|find_user as user %}
+                                    <td>
+                                        <label class="badge bg-danger">{{user.nickname|capitalize}}</label>
+                                    </td>
+                                    {% endwith %}
+                                    <td>
+                                        {% if request.session.sign == room.master %}
+                                        <a href="{% url 'room:enter' room_num=room.num %}" class="btn btn-success">👈
+                                            Enter</a>
+                                        <a href="{% url 'room:edit' room_num=room.num %}"
+                                            class="btn btn-success">🛠️</a>
+                                        <form class="d-inline-block" action="{% url 'room:delete' room_num=room.num %}"
+                                            method="post">
+                                            <button class="btn btn-danger">🗑️</button>
+                                        </form>
+                                        {% else %}
+                                        {% if room.num|is_crew:request.session.sign %}
+                                        <a href="{% url 'room:enter' room_num=room.num %}" class="btn btn-success">👈
+                                            Enter</a>
+                                        <form class="d-inline-block" action="{% url 'room:out' room_num=room.num %}"
+                                            method="post">
+                                            <input type="hidden" name="user_num" value="{{request.session.sign.num}}">
+                                            <button type="submit" class="btn btn-danger">👋 Out</button>
+                                        </form>
+                                        {% else %}
+                                        {% if request.session.sign %}
+                                        <form class="d-inline-block" action="{% url 'room:join' room_num=room.num %}"
+                                            method="post">
+                                            <input type="hidden" name="user_num" value="{{request.session.sign.num}}">
+                                            <button type="submit" class="btn btn-info">👈 Join the room</button>
+                                        </form>
+                                        {% else %}
+                                        <button onclick="alert('로그인이 필요합니다.')" class="btn btn-info">👈 Join the
+                                            room</button>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4">
+                                        <div class="alert alert-warning">
+                                            참여한 방이 없습니다 😥
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

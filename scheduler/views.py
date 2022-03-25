@@ -1,8 +1,12 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 # from django.utils import timezone
 from rest_framework.decorators import api_view
 from .forms import CalendarForm
 from .models import User, Room, Calendar
+from django.core import serializers
+from django.http import JsonResponse, HttpResponse
+
 # from django.contrib.auth import views as auth_views
 
 def path_type(request):
@@ -14,7 +18,6 @@ def path_type(request):
 @api_view(['GET'])
 def index(request):
     room_list = Room.objects.order_by('regdate')
-
     context = {
         'path_type': path_type(request),
         'room_list': room_list,
@@ -25,13 +28,25 @@ def index(request):
 @api_view(['GET'])
 def schedule(request):
     user = User.objects.all()
-    
+
     context = {
         'path_type': path_type(request),
         'schedule': user
     }
 
     return render(request, 'scheduler/schedule.html', context)
+
+def calendar_list(reqeust, num):
+    '''
+    schedule 목록
+    '''
+    schedule_list = Calendar.objects.filter(room_num_id=num).order_by('regdate')
+    
+    # 밑에 과정들
+    # https://dev-yakuza.posstree.com/ko/django/response-model-to-json/ [ 참조 ]
+    
+    list = serializers.serialize('json', schedule_list)
+    return HttpResponse(list, content_type="text/json-comment-filtered")
 
 def list(reqeust):
     '''
@@ -47,10 +62,18 @@ def create(request):
     '''
     if request.method == 'POST':
         form = CalendarForm(request.POST)
+        start_date = request.POST['start_date']
+        start_time = request.POST['start_time']
+
         if form.is_valid():
             calendar = form.save(commit=False)
+            
+            calendar.start_date = str(calendar.start_date).replace('+09:00','+00:00')
+            calendar.end_date = str(calendar.end_date).replace('+09:00','+00:00')
+            
             calendar.save()
-            return redirect ('scheduler:schedule_create')
+            
+            return redirect ('room:enter', room_num=calendar.room_num_id)
     else:
         form = CalendarForm()
     context = {'form': form}
@@ -75,8 +98,7 @@ def update(request, schedule_num):
             calendar = form.save(commit=False)
             # calendar.updates = timezone.now()
             calendar.save()
-            test=3
-            return redirect ('scheduler:schedule_detail', test, schedule_num=calendar.pk) # pk === num
+            return redirect ('scheduler:schedule_detail', schedule_num=calendar.pk) # pk === num
     else:
         form = CalendarForm(instance=calendar)
     context = {'form': form}

@@ -1,24 +1,23 @@
 {% extends '../layout.html' %}
 {% load bootstrap5 %}
+{% load customs %}
 {% block content %}
 <div class="container">
     <h5 class="my-3 border-bottom pb-2">일정 등록</h5>
     <form method="post" class="post-form my-3" novalidate>
         {% csrf_token %}
-        <!-- 오류 표시 Start -->
-        {% comment %} {% if form.errors %}
-        <div class="alert alert-danger" role="alert">
-        {% for field in form %}
-            {% if field.errors %}
-            <strong>{{ field.label }}</strong>
-            {{ field.errors }}
-            {% endif %}
-        {% endfor %}
-        </div>
-        {% endif %} {% endcomment %}
-        <!-- 오류 표시 End -->
-        {% bootstrap_form form %}
+        {% set 'start_date/'|add:request.GET.s as start_date %}
+        {% set 'end_date/'|add:request.GET.e as end_date %}
+        {% bootstrap_form form|form_value:start_date|form_value:end_date  %}
         <button type="submit" class="btn btn-primary">저장하기</button>
     </form>
 </div>
+
+<script>
+    const rnum = document.getElementById('id_room_num');
+    const unum = document.getElementById('id_user_num');
+
+    rnum.value = '{{request.GET.r_num}}';
+    unum.value = "{{request.session.sign}}";
+</script>
 {% endblock content %}
