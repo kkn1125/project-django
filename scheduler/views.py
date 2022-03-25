@@ -14,19 +14,9 @@ def path_type(request):
     elif request.path.split('/')[-1] == 'schedule':
         return 'Schedule'
     
-# @api_view(['GET'])
-# def test(request):
-    
-#     context = {
-#         'test': 1,
-#     }
-    
-#     return render(request, 'scheduler/sample.html', context)
-    
 @api_view(['GET'])
 def index(request):
     room_list = Room.objects.order_by('regdate')
-
     context = {
         'path_type': path_type(request),
         'room_list': room_list,
@@ -37,7 +27,7 @@ def index(request):
 @api_view(['GET'])
 def schedule(request):
     user = User.objects.all()
-    
+
     context = {
         'path_type': path_type(request),
         'schedule': user
@@ -45,11 +35,12 @@ def schedule(request):
 
     return render(request, 'scheduler/schedule.html', context)
 
-def calendar_list(reqeust):
+def calendar_list(reqeust, num):
+    print(num)
     '''
     schedule 목록
     '''
-    schedule_list = Calendar.objects.order_by('regdate')
+    schedule_list = Calendar.objects.filter(room_num_id=num).order_by('regdate')
     
     # 밑에 과정들
     # https://dev-yakuza.posstree.com/ko/django/response-model-to-json/ [ 참조 ]
@@ -73,8 +64,12 @@ def create(request):
         form = CalendarForm(request.POST)
         if form.is_valid():
             calendar = form.save(commit=False)
+            
+            calendar.start_date = str(calendar.start_date).replace('+09:00','+00:00')
+            calendar.end_date = str(calendar.end_date).replace('+09:00','+00:00')
             calendar.save()
-            return redirect ('scheduler:schedule_list')
+            
+            return redirect ('room:enter', room_num=calendar.room_num_id)
     else:
         form = CalendarForm()
     context = {'form': form}

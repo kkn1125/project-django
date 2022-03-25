@@ -85,12 +85,13 @@ def signin(request):
             if User.objects.filter(email=email).exists():
                     user = User.objects.get(email=email)
                     if password == user.password:
-                        request.session['sign'] = {
-                            'nickname': user.nickname,
-                            'email': user.email,
-                            'profile': str(user.profile),
-                            'num': user.num,
-                        }
+                        request.session['sign'] = user.num
+                        # {
+                        #     # 'nickname': user.nickname,
+                        #     # 'email': user.email,
+                        #     # 'profile': str(user.profile),
+                        #     # 'num': user.num,
+                        # }
                         return redirect('/?success=1')
                     else:
                         return redirect('./signin?error=1')
@@ -111,6 +112,7 @@ def signin(request):
 def signup(request):
     context = {
         'path_type': path_type(request),
+        'userForm': UserForm()
     }
     
     if request.method == 'GET':
@@ -150,19 +152,20 @@ def update(request, num):
             uf = userForm.save(commit=False) # 여기 하는 중
             if not uf.password:
                 uf.password = origin_pass
-            request.session['sign'] = {
-                'nickname': uf.nickname,
-                'email': uf.email,
-                'profile': str(uf.profile),
-                'num': uf.num,
-            }
+            request.session['sign'] = uf.num
+            # {
+            #     'nickname': uf.nickname,
+            #     'email': uf.email,
+            #     'profile': str(uf.profile),
+            #     'num': uf.num,
+            # }
             uf.save()
         return redirect('account:update', user.pk)
 
 @api_view(['GET'])
 def signout(request):
     request.session['sign'] = ''
-    return redirect('/')
+    return redirect('/?success=5')
 
 @api_view(['POST'])
 def unsign(request, num):

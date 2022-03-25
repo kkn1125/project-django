@@ -1,4 +1,4 @@
-from django.forms import CharField, DateInput, EmailInput, FileInput, ImageField, ModelForm, PasswordInput, TextInput, Textarea, ValidationError
+from django.forms import CharField, DateInput, DateTimeInput, EmailInput, FileInput, ImageField, ModelForm, PasswordInput, TextInput, Textarea, ValidationError
 from .models import *
 
 class UserForm(ModelForm):
@@ -16,7 +16,7 @@ class UserForm(ModelForm):
         
 class LoginForm(ModelForm):
     # email = forms.CharField(required=False)
-    # password = forms.CharField(required=False)
+    
     def clean_email(self):
         data = self.cleaned_data['email']
         if "@" not in data:
@@ -31,6 +31,10 @@ class LoginForm(ModelForm):
         fields = [
             'email', 'password'
             ]
+        widgets = {
+            'email': EmailInput(attrs={'type':'email', 'autocomplete':'username'}),
+            'password': PasswordInput(attrs={'type':'password', 'autocomplete':'current-password'})
+        }
         
 class FindForm(ModelForm):
     def clean_email(self):
@@ -82,8 +86,8 @@ class CalendarForm(ModelForm):
             ]
         widgets = {
             'schedule': Textarea(attrs={'rows': 10}),
-            'start_date': DateInput(attrs={'type': 'date'}),
-            'end_date': DateInput(attrs={'type': 'date'}),
+            'start_date': DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_date': DateTimeInput(attrs={'type': 'datetime-local'}),
         }
     # def clean_coworker(self):
     #     data = self.cleaned_data['coworker']

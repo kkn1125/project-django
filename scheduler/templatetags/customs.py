@@ -8,6 +8,54 @@ register = template.Library()
 def set(value=None):
     return value
 
+"""
+회원 넘버로 조회하는 필드들
+"""
+@register.filter(name='user_profile')
+def user_profile(value, key=''):
+    if not value:
+        return key
+    user = User.objects.filter(pk=value)
+    if user.exists():
+        profile = user.get(pk=value).profile
+        if str.strip(str(profile)):
+            return '/media/{0}'.format(str(profile))
+        else:
+            return key
+    return key
+
+@register.filter(name='user_nickname')
+def user_nickname(value, key=''):
+    if not value:
+        return key
+    user = User.objects.filter(pk=value)
+    if user.exists():
+        nickname = user.get(pk=value).nickname
+        return nickname
+    return key
+
+@register.filter(name='user_email')
+def user_email(value, key=''):
+    if not value:
+        return key
+    user = User.objects.filter(pk=value)
+    if user.exists():
+        email = user.get(pk=value).email
+        return email
+    return key
+"""
+회원 넘버로 조회하는 필드들
+"""
+
+@register.filter(name='form_value')
+def form_value(value, key):
+    print(key)
+    keys = key.split('/')[0]
+    vals = key.split('/')[1]
+    print(vals)
+    value.initial.setdefault(keys, vals)
+    return value
+
 @register.filter(name='is_number')
 def is_number(value):
     return not str.isdecimal(value)

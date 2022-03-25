@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
-from scheduler.models import Room, UserInRoom
+from scheduler.models import Room, UserInRoom, User
 from scheduler.forms import RoomForm
 
 def path_type(request):
@@ -10,35 +10,6 @@ def path_type(request):
         return 'scheduler'
 
 # Create your views here.
-@api_view(['GET', 'POST'])
-def create(request):
-    if request.method == 'GET':
-        roomForm = RoomForm
-        context = {
-            'path_type': path_type(request),
-            'roomForm': roomForm
-        }
-        return render(request, 'scheduler/room/edit.html', context)
-    elif request.method == 'POST':
-        title = request.POST['title']
-        master = request.POST['master']
-        
-        room = Room(
-            master=master,
-            title=title,
-        )
-
-        room.save()
-        
-        userInRoom = UserInRoom(
-            room_num=room.pk,
-            user_num=master,
-        )
-        
-        userInRoom.save()
-        
-        return redirect('/')
-    
 @api_view(['POST'])
 def join_room(request, room_num):
     user_num = request.POST['user_num']
@@ -64,14 +35,68 @@ def out_room(request, room_num):
     return redirect('/?success=3')
     
 @api_view(['GET', 'POST'])
+def create(request):
+    if request.method == 'GET':
+        roomForm = RoomForm
+        context = {
+            'path_type': path_type(request),
+            'roomForm': roomForm
+        }
+        return render(request, 'scheduler/room/edit.html', context)
+    elif request.method == 'POST':
+        title = request.POST['title']
+        master = request.POST['master']
+        invite = list(map(str.strip, request.POST['invite'].split(',')))
+        
+        users = User.objects.filter(nickname__in=invite)
+        
+        users_num = list(filter(lambda z: z != int(master), list(map(lambda x: x.get('num'), users.values()))))
+        
+        print(users_num)
+        
+        room = Room(
+            master=master,
+            title=title,
+        )
+
+        room.save()
+        
+        userInRoom = UserInRoom(
+            room_num_id=room.pk,
+            user_num_id=master,
+        )
+        userInRoom.save()
+        
+        for i in users_num:
+            UserInRoom(
+                room_num_id=room.pk,
+                user_num_id=i
+            ).save()
+        
+        return redirect('/')
+    
+@api_view(['GET', 'POST'])
 def edit(request, room_num):
     room = Room.objects.get(num=room_num)
     
     if request.method == 'POST':
+        if not request.POST['master']:
+            return redirect('/?error=4')
         room.title = request.POST['title']
         room.master = request.POST['master']
-        
         room.save()
+        
+        invite = list(map(str.strip, request.POST['invite'].split(',')))
+        
+        users = User.objects.filter(nickname__in=invite)
+        
+        users_num = list(map(lambda x: x.get('num'), users.values()))
+        
+        for i in users_num:
+            UserInRoom(
+                room_num_id=room.pk,
+                user_num_id=i
+            ).save()
         
         return redirect('scheduler:index')
     else:
@@ -81,7 +106,7 @@ def edit(request, room_num):
                 'room': room
             }
             return render(request, 'scheduler/room/edit.html', context)
-        else: redirect('/?error=3')
+        else: return redirect('/?error=3')
 
 @api_view(['POST'])
 def delete(request, room_num):
@@ -96,8 +121,10 @@ def delete(request, room_num):
     
 @api_view(['GET'])
 def enter_room(request, room_num):
+    
     context = {
         'path_type': path_type(request),
         'room_num': room_num
     }
+    
     return render(request, 'scheduler/schedule.html', context)

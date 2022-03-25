@@ -85,14 +85,16 @@ document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
     if (calendarEl) {
         let datas;
-
-        // 비동기 통신
+        const last_url = location.pathname.split('/').filter(x=>x!='').pop();
+        console.log(parseInt(last_url))
+        if(typeof parseInt(last_url) == 'number')
         axios({
             method: 'get',
-            url: '/calendar_list/',
+            url: `/calendar_list/${last_url}/`,
             data: {}
         }).then(function (response) {
             datas = response.data;
+            console.log(datas)
             datas = datas.map(x=>{
                 return {
                     title: x.fields.title,
@@ -101,17 +103,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            // 이벤트 추가 - fullcalendar
             datas.forEach(e=>{
                 calendar.addEvent(e);
             });
         });
         
         calendar = new FullCalendar.Calendar(calendarEl, {
+            timeZone: 'Asia/Seoul',
             headerToolbar: {
                 left: 'prevYear,prev,next,nextYear today',
                 center: 'title',
-                right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
             dayMaxEventRows: true,
             views: {
@@ -124,33 +126,21 @@ document.addEventListener('DOMContentLoaded', function () {
             selectable: true,
             editable: true,
             navLinks: true,
-            // dateClick: function (info) {
-            //     console.log(this.getEvents())
-            // },
             selectAllow: function (info) {
-                // mousedown
                 console.log('selecting')
                 return true
             },
             select: function (info) {
-                // mouseup
                 document.querySelector('#calPopup') ?.remove();
+
+                function padDate(date){
+                    return date.match(/T/g)?date:date+'T'+'00:00'
+                }
+
                 if (!document.querySelector('#calPopup'))
-                    location.href = `/create/?s=${info.startStr}&e=${info.endStr}&r_num=${location.href.split('/').pop()}`;
-                    // popupmodal({
-                    //     title: 'no title',
-                    //     start: info.startStr,
-                    //     end: info.endStr
-                    // });
-                //this.addEvent({
-                //    title: 'test',
-                //    start: info.startStr,
-                //    end: info.endStr,
-                //});
+                    location.href = `/create/?s=${padDate(info.startStr)}&e=${padDate(info.endStr)}&r_num=${location.href.split('/').pop()}`;
+
             },
-            // unselect: function (ev) {
-            //   
-            // },
             eventClick: function (info) {
                 console.log(info.event)
                 if (!document.querySelector('#calPopup'))
@@ -160,12 +150,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 function send(data) {
                     info.event.setProp('title', data)
                 }
-                // info.event.setProp('title', 'wow!')
-                // 내용 변경!
-                console.log(info.view.type)
             },
             eventChange: function (info) {
-                console.log(info)
+                // console.log(info)
             },
         });
 

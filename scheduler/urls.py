@@ -14,5 +14,5 @@ urlpatterns = [
     path('schedule/', views.schedule, name = 'schedule'), # 달력 스케줄
     # ----------------------------------------------------------------------------
     # path('test/', views.test, name = 'test'), # 달력 스케줄
-    path('calendar_list/', views.calendar_list, name = 'calendar_list'), # 달력 스케줄
+    path('calendar_list/<int:num>/', views.calendar_list, name = 'calendar_list'), # 달력 스케줄
 ]

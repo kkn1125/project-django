@@ -1,38 +1,42 @@
 {% extends './layout.html' %}
+{% load customs %}
 {% load bootstrap5 %}
+
 {% block content %}
+
+{% set request.session.sign|user_profile:'http://placehold.jp/150x150.png' as profile %}
+{% set request.session.sign|user_nickname:'No Name' as nickname %}
+{% firstof '' request.session.sign|user_email as email %}
+
 <div class="container-fluid">
     <!-- Row -->
     <div class="row">
         <!-- Column -->
         <div class="col-12">
             <div class="card">
-                <form class="form-horizontal form-material" action="{% if request.session.sign == '' %}{% url 'account:signup' %}{% else %}{% url 'account:update' num=request.session.sign.num %}{% endif %}" method="post" enctype="multipart/form-data" novalidate>
+                <form class="form-horizontal form-material" action="{% if request.session.sign %}{% url 'account:update' num=request.session.sign %}{% else %}{% url 'account:signup' %}{% endif %}" method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
                     <div class="card-body">
                         <div class="m-t-30 text-center">
                             <label for="profile">
-                                {% if request.session.sign != '' %}
-                                <img id="relProfile" src="/media/{{request.session.sign.profile}}" class="rounded-circle" width="150" height="150" />
-                                {% else %}
-                                <img id="relProfile" src="http://placehold.jp/150x150.png" class="rounded-circle" width="150" height="150" />
-                                {% endif %}
+                                <img id="relProfile" src="{{profile}}" class="rounded-circle" width="150" height="150" />
                             </label>
                             <input ghost type="file" name="profile" id="profile">
-                            <h4 id="relNickname" class="card-title m-t-10">{{request.session.sign.nickname | default:'No Name'}}</h4>
+                            <h4 id="relNickname" class="card-title m-t-10">{{nickname}}</h4>
                         </div>
                     </div>
                     <div>
                         <hr>
                     </div>
                     <div class="card-body">
+
                         {% bootstrap_form userForm %}
                         
                         <div class="form-group">
                             <div class="col-sm-12">
-                                {% if request.session.sign != '' %}
+                                {% if request.session.sign %}
                                 <button class="btn btn-success text-white">Update</button>
-                                <button class="btn btn-danger text-white" id="unsign" dir="{% url 'account:unsign' num=request.session.sign.num %}" type="button">Un Sign</button>
+                                <button class="btn btn-danger text-white" id="unsign" dir="{% url 'account:unsign' num=request.session.sign %}" type="button">Un Sign</button>
                                 {% else %}
                                 <button class="btn btn-success text-white">Sign Up</button>
                                 {% endif %}

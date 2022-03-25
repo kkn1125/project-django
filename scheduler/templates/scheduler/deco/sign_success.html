@@ -1,8 +1,12 @@
+{% load customs %}
+{% if request.session.sign %}
+{% firstof '' request.session.sign|user_nickname as nickname %}
+{% endif %}
 <script>
     const data = {% if request.GET.success == '1' %}
     {
         title: 'System',
-        msg: '{{request.session.sign.nickname}}님 로그인에 성공하셨습니다.',
+        msg: '{{nickname}}님 로그인에 성공하셨습니다.',
         auto: true,
     }
     {% elif request.GET.success == '2' %}
@@ -23,8 +27,22 @@
         msg: '일치하는 유저 정보가 있습니다.',
         auto: true,
     }
+    {% elif request.GET.success == '5' %}
+    {
+        title: 'System',
+        msg: '로그아웃 되었습니다.',
+        auto: true,
+    }
+    {% elif request.GET.error == '4' %}
+    {
+        title: 'System',
+        msg: '방을 정보를 수정하는데 문제가 발생했습니다.',
+        auto: true,
+    }
     {% else %}
     {}
     {% endif %}
-    if(data.hasOwnProperty('title')) window.addEventListener('DOMContentLoaded', e=>addToast(data));
+    window.addEventListener('load', e=> {
+        if(data.hasOwnProperty('title')) addToast(data);
+    });
 </script>

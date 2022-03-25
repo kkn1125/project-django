@@ -23,6 +23,8 @@
             <span class="badge text-dark">{{user}}</span>
             {% endfor %}
         </div>
+        {% endif %}
+
         <script>
             invite.addEventListener('input', e=>{
                 let users = invite.value.split(',').map(x=>x.trim()).filter(x=>x);
@@ -57,13 +59,19 @@
                         temp = target.innerHTML;
                     }
 
+                    {% if rnum|is_number %}
+                    let is_users = [];
+                    let room_users = false;
+                    {% else %}
                     let is_users = res.data.map(x=>x.fields.nickname);
                     let room_users = '{{rnum|room_user|to_nickname|join:','}}'.split(',');
+                    {% endif %}
+
                     let nosubmit = false;
                     if(res.data.length != users.length){
                         render(0);
                         nosubmit = true;
-                    } else if(room_users.filter(a=>is_users.indexOf(a)>-1).length){
+                    } else if(room_users && room_users.filter(a=>is_users.indexOf(a)>-1).length){
                         let filtered = room_users.filter(a=>is_users.indexOf(a)>-1);
                         render(-2, filtered);
                         nosubmit = true;
@@ -80,9 +88,8 @@
                 })
             });
         </script>
-        {% endif %}
         
-        <input name="master" type="number" ghost value="{{request.session.sign.num}}">
+        <input name="master" type="number" ghost value="{{request.session.sign}}">
         <button id="edit" class="btn btn-info" type="submit">Edit Room</button>
     </form>
 
