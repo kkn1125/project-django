@@ -1,7 +1,6 @@
-// window.addEventListener('click', );
-const profile = document.getElementById('profile');
+const profile = document.getElementById('id_profile');
 const relProfile = document.getElementById('relProfile');
-const nickname = document.getElementById('nickname');
+const nickname = document.getElementById('id_nickname');
 const relNickname = document.getElementById('relNickname');
 const unsign = document.getElementById('unsign');
 
@@ -57,7 +56,7 @@ if(relNickname) {
 
 var toastElList = [].slice.call(document.querySelectorAll('.toast'))
 var toastList = toastElList.map(function (toastEl) {
-  return new bootstrap.Toast(toastEl, option)
+    return new bootstrap.Toast(toastEl, option)
 });
 
 function createToast(title='Master', msg='No Message', time=new Date(), auto=true){

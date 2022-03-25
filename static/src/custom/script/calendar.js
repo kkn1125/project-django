@@ -85,14 +85,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
     if (calendarEl) {
         let datas;
-
-        // 비동기 통신
+        const last_url = location.pathname.split('/').filter(x=>x!='').pop();
+      
+        if(typeof parseInt(last_url) == 'number')
         axios({
             method: 'get',
-            url: '/calendar_list/',
+            url: `/calendar_list/${last_url}/`,
             data: {}
         }).then(function (response) {
             datas = response.data;
+            console.log(datas)
+
             datas = datas.map(x=>{
                 return {
                     title: x.fields.title,
@@ -125,39 +128,20 @@ document.addEventListener('DOMContentLoaded', function () {
             selectable: true,
             editable: true,
             navLinks: true,
-            // dateClick: function (info) {
-            //     console.log(this.getEvents())
-            // },
             selectAllow: function (info) {
                 // mousedown
-                // console.log('selecting')
                 return true
             },
             select: function (info) {
-                // mouseup
                 document.querySelector('#calPopup') ?.remove();
-                if (!document.querySelector('#calPopup')) {
-                    if (info.startStr.indexOf("T") == -1) { // 날짜만 표시하는 경우
-                        location.href = `/create/?start=${info.startStr}T00:00:00&end=${info.endStr}T00:00:00`;
-                    } else { // 날짜와 시간을 모두 표시하는 경우
-                        location.href = `/create/?start=${info.startStr}&end=${info.endStr}`;
-                    }
-                    // popupmodal({
-                    //     title: 'no title',
-                    //     start: info.startStr,
-                    //     end: info.endStr
-                    // });
-                //this.addEvent({
-                //    title: 'test',
-                //    start: info.startStr,
-                //    end: info.endStr,
-                //});
+
+                function padDate(date){
+                    return date.match(/T/g)?date:date+'T'+'00:00'
                 }
 
+                if (!document.querySelector('#calPopup'))
+                    location.href = `/create/?s=${padDate(info.startStr)}&e=${padDate(info.endStr)}&r_num=${location.href.split('/').pop()}`;
             },
-            // unselect: function (ev) {
-            //   
-            // },
             eventClick: function (info) {
                 console.log(info.event)
                 if (!document.querySelector('#calPopup'))
@@ -167,12 +151,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 function send(data) {
                     info.event.setProp('title', data)
                 }
-                // info.event.setProp('title', 'wow!')
-                // 내용 변경!
-                console.log(info.view.type)
             },
             eventChange: function (info) {
-                console.log(info)
+                // console.log(info)
             },
         });
 

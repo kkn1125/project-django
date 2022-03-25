@@ -12,5 +12,7 @@ urlpatterns = [
     # ----------------------------------------------------------------------------
     path('', views.index, name = 'index'), # 첫 화면 일정 리스트
     path('schedule/', views.schedule, name = 'schedule'), # 달력 스케줄
-    path('calendar_list/', views.calendar_list, name = 'calendar_list'),
+    # ----------------------------------------------------------------------------
+    # path('test/', views.test, name = 'test'), # 달력 스케줄
+    path('calendar_list/<int:num>/', views.calendar_list, name = 'calendar_list'), # 달력 스케줄
 ]
