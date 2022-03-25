@@ -5,20 +5,47 @@
     <h5 class="my-3 border-bottom pb-2">일정 등록</h5>
     <form method="post" class="post-form my-3" novalidate>
         {% csrf_token %}
-        <!-- 오류 표시 Start -->
-        {% comment %} {% if form.errors %}
-        <div class="alert alert-danger" role="alert">
-        {% for field in form %}
-            {% if field.errors %}
-            <strong>{{ field.label }}</strong>
-            {{ field.errors }}
-            {% endif %}
-        {% endfor %}
-        </div>
-        {% endif %} {% endcomment %}
-        <!-- 오류 표시 End -->
         {% bootstrap_form form %}
+        <div class="mb-3">
+            <label class="form-label" for="start_time">Start time</label>
+            <input type="time" name="start_time" class="form-control" id="start_time">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="end_time">End time</label>
+            <input type="time" name="end_time" class="form-control" id="end_time">
+        </div>
         <button type="submit" class="btn btn-primary">저장하기</button>
     </form>
 </div>
+
+<script>
+    // const params = {};
+    // const valid = location.search.slice(1).split('&').map(a=>a.split('=')).map(x=>{
+    //     params[x[0]] = x[1];
+    // });
+    
+    // ?start=2022-03-22T06:00:00&end=2022-03-22T06:30:00 형태의 날짜 시간 편집
+    let params = location.search.slice(1).split('&').map(x=>x.split('T'));
+    let start_date_param = params[0][0].slice(-10)
+    let end_date_param = params[1][0].slice(-10)
+    let start_time_param = params[0][1]
+    let end_time_param = params[1][1]
+
+    const start_date = document.getElementById('id_start_date');
+    const end_date = document.getElementById('id_end_date');
+    const start_time = document.getElementById('start_time');
+    const end_time = document.getElementById('end_time');
+    // const room_num = document.getElementById('id_room_num');
+    // const user_num = document.getElementById('id_user_num');
+
+    start_date.value = start_date_param;
+    end_date.value = end_date_param;
+    start_time.value = start_time_param;
+    end_time.value = end_time_param;
+    // start_date.value = params.start;
+    // end_date.value = params.end;
+    
+    // rnum.value = params.r_num;
+    // unum.value = "{{ request.session.sign.num }}";
+</script>
 {% endblock content %}
