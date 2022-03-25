@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (calendarEl) {
         let datas;
         const last_url = location.pathname.split('/').filter(x=>x!='').pop();
-        console.log(parseInt(last_url))
+      
         if(typeof parseInt(last_url) == 'number')
         axios({
             method: 'get',
@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }).then(function (response) {
             datas = response.data;
             console.log(datas)
+
             datas = datas.map(x=>{
                 return {
                     title: x.fields.title,
@@ -103,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
+            // 이벤트 추가 - fullcalendar
             datas.forEach(e=>{
                 calendar.addEvent(e);
             });
@@ -127,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
             editable: true,
             navLinks: true,
             selectAllow: function (info) {
-                console.log('selecting')
+                // mousedown
                 return true
             },
             select: function (info) {
@@ -139,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (!document.querySelector('#calPopup'))
                     location.href = `/create/?s=${padDate(info.startStr)}&e=${padDate(info.endStr)}&r_num=${location.href.split('/').pop()}`;
-
             },
             eventClick: function (info) {
                 console.log(info.event)

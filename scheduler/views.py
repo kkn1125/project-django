@@ -1,11 +1,12 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 # from django.utils import timezone
 from rest_framework.decorators import api_view
 from .forms import CalendarForm
 from .models import User, Room, Calendar
-
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse
+
 # from django.contrib.auth import views as auth_views
 
 def path_type(request):
@@ -36,7 +37,6 @@ def schedule(request):
     return render(request, 'scheduler/schedule.html', context)
 
 def calendar_list(reqeust, num):
-    print(num)
     '''
     schedule 목록
     '''
@@ -62,11 +62,15 @@ def create(request):
     '''
     if request.method == 'POST':
         form = CalendarForm(request.POST)
+        start_date = request.POST['start_date']
+        start_time = request.POST['start_time']
+
         if form.is_valid():
             calendar = form.save(commit=False)
             
             calendar.start_date = str(calendar.start_date).replace('+09:00','+00:00')
             calendar.end_date = str(calendar.end_date).replace('+09:00','+00:00')
+            
             calendar.save()
             
             return redirect ('room:enter', room_num=calendar.room_num_id)
